@@ -35,9 +35,9 @@ class Proxy {
     function forward($url) {
         // build the correct url
         if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
-            $url = "https://" . $this->config["server"] . ":" . $this->config["https_port"] . "/" . ltrim($url, '/');
+            $url = "https://" . $this->config["server"] . ":" . $this->config["https_port"] . "/" . ltrim($url, "/");
         else
-            $url = "http://" . $this->config["server"] . ":" . $this->config["http_port"] . "/" . ltrim($url, '/');
+            $url = "http://" . $this->config["server"] . ":" . $this->config["http_port"] . "/" . ltrim($url, "/");
         
         // set url
         curl_setopt($this->ch, CURLOPT_URL, $url);
@@ -62,7 +62,7 @@ class Proxy {
         }
         
         // forward response headers
-        $headers = substr($data, 0, $info['header_size']);
+        $headers = substr($data, 0, $info["header_size"]);
         $this->set_response_headers($headers);
         
         // close connection
@@ -93,18 +93,18 @@ class Proxy {
     	// prepare array
     	$headers = array();
     	foreach (explode("\n", $response) as $header) {
-    		 $parts = explode(':', $header);
+    		 $parts = explode(":", $header);
     		 $key = trim(array_shift($parts));
-    		 $value = trim(implode('', $parts));
+    		 $value = trim(implode("", $parts));
     		 $headers[$key] = $value;
     	}
     	
     	// modify redirects
-    	if (isset($headers['Location'])) {
-    		$base_url = $_SERVER['HTTP_HOST'];
-    		$base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    	if (isset($headers["Location"])) {
+    		$base_url = $_SERVER["HTTP_HOST"];
+    		$base_url .= str_replace(basename($_SERVER["SCRIPT_NAME"]), "", $_SERVER["SCRIPT_NAME"]);
     		
-    		$headers['Location'] = str_replace($this->config['server'], $base_url, $headers['Location']);
+    		$headers["Location"] = str_replace($this->config["server"], $base_url, $headers["Location"]);
     	}
     	
     	// set headers
