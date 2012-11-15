@@ -95,15 +95,17 @@ class Proxy {
     	foreach (explode("\n", $response) as $header) {
     		 $parts = explode(":", $header);
     		 $key = trim(array_shift($parts));
-    		 $value = trim(implode("", $parts));
+    		 $value = trim(implode(":", $parts));
     		 $headers[$key] = $value;
     	}
     	
     	// modify redirects
     	if (isset($headers["Location"])) {
     		$base_url = $_SERVER["HTTP_HOST"];
-    		$base_url .= str_replace(basename($_SERVER["SCRIPT_NAME"]), "", $_SERVER["SCRIPT_NAME"]);
-    		
+    		$base_url .= rtrim(str_replace(basename($_SERVER["SCRIPT_NAME"]), "", $_SERVER["SCRIPT_NAME"]), '/');
+			
+			$headers["Location"] = str_replace(":" . $this->config["http_port"], '', $headers["Location"]);
+			$headers["Location"] = str_replace(":" . $this->config["https_port"], '', $headers["Location"]);
     		$headers["Location"] = str_replace($this->config["server"], $base_url, $headers["Location"]);
     	}
     	
