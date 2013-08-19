@@ -4,7 +4,7 @@
  * @name        PHP Proxy
  * @author      Jens Segers
  * @link        http://www.jenssegers.be
- * @license     MIT License Copyright (c) 2012 Jens Segers
+ * @license     MIT License Copyright (c) 2013 Jens Segers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class Proxy
-{
+class Proxy {
     
     // curl handle
     protected $ch;
@@ -33,16 +32,17 @@ class Proxy
     // configuration
     protected $config = array();
 
+    /**
+     * New proxy instance
+     */
     function __construct()
     {
         // load the config
         $config = array();
-        require ("config.php");
+        require "config.php";
         
         // check config
-        if (!count($config)) {
-            die("Please provide a valid configuration");
-        }
+        if (!count($config)) die("Please provide a valid configuration");
         
         $this->config = $config;
         
@@ -57,15 +57,20 @@ class Proxy
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->config["timeout"]);
     }
     
-    /*
+    /**
      * Forward the current request to this url
+     *
+     * @param string $url
      */
-    function forward($url)
+    public function forward($url = '')
     {
         // build the correct url
-        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
+        {
             $url = "https://" . $this->config["server"] . ":" . $this->config["https_port"] . "/" . ltrim($url, "/");
-        } else {
+        } 
+        else 
+        {
             $url = "http://" . $this->config["server"] . ":" . $this->config["http_port"] . "/" . ltrim($url, "/");
         }
         
@@ -73,11 +78,12 @@ class Proxy
         curl_setopt($this->ch, CURLOPT_URL, $url);
         
         // forward request headers
-        $headers = getallheaders();
+        $headers = $this->get_request_headers();
         $this->set_request_headers($headers);
         
         // forward post
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SERVER["REQUEST_METHOD"] == "POST")
+        {
             $this->set_post($_POST);
         }
         
@@ -99,17 +105,42 @@ class Proxy
         echo $body;
     }
     
-    /*
-     * Pass the request headers to cURL
+    /**
+     * Get the headers of the current request
      */
-    function set_request_headers($request)
+    protected function get_request_headers()
+    {
+        // use native getallheaders function
+        if (function_exists('getallheaders')) return getallheaders();
+
+        // fallback
+        $headers = '';
+        foreach ($_SERVER as $name => $value)
+        {
+            if (substr($name, 0, 5) == 'HTTP_')
+            {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Pass the request headers to cURL
+     *
+     * @param array $request
+     */
+    protected function set_request_headers($request)
     {
         // headers to strip
         $strip = array("Content-Length", "Host");
         
         $headers = array();
-        foreach ($request as $key => $value) {
-            if ($key && !in_array($key, $strip)) {
+        foreach ($request as $key => $value)
+        {
+            if ($key && !in_array($key, $strip))
+            {
                 $headers[] = "$key: $value";
             }
         }
@@ -117,10 +148,12 @@ class Proxy
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
     }
     
-    /*
+    /**
      * Pass the cURL response headers to the user
+     *
+     * @param array $response
      */
-    function set_response_headers($response)
+    protected function set_response_headers($response)
     {
         // headers to strip
         $strip = array("Transfer-Encoding");
@@ -129,18 +162,18 @@ class Proxy
         $headers = explode("\n", $response);
         
         // process response headers
-        foreach ($headers as &$header) {
+        foreach ($headers as &$header)
+        {
             // skip empty headers
-            if (!$header) {
-                continue;
-            }
+            if (!$header) continue;
             
             // get header key
             $pos = strpos($header, ":");
             $key = substr($header, 0, $pos);
             
             // modify redirects
-            if (strtolower($key) == "location") {
+            if (strtolower($key) == "location")
+            {
                 $base_url = $_SERVER["HTTP_HOST"];
                 $base_url .= rtrim(str_replace(basename($_SERVER["SCRIPT_NAME"]), "", $_SERVER["SCRIPT_NAME"]), "/");
                 
@@ -151,26 +184,33 @@ class Proxy
             }
             
             // set headers
-            if (!in_array($key, $strip)) {
+            if (!in_array($key, $strip))
+            {
                 header($header, FALSE);
             }
         }
     }
     
-    /*
+    /**
      * Set POST values including FILES support
+     *
+     * @param array $post
      */
-    function set_post($post)
+    protected function set_post($post)
     {
         // file upload support
-        if (count($_FILES)) {
-            foreach ($_FILES as $key => $file) {
+        if (count($_FILES))
+        {
+            foreach ($_FILES as $key => $file)
+            {
                 $parts = pathinfo($file["tmp_name"]);
                 $name = $parts["dirname"] . "/" . $file["name"];
                 rename($file["tmp_name"], $name);
                 $post[$key] = "@" . $name;
             }
-        } else {
+        } 
+        else
+        {
             $post = http_build_query($post);
         }
         
