@@ -84,7 +84,19 @@ class Proxy {
         // forward post
         if ($_SERVER["REQUEST_METHOD"] == "POST")
         {
-            $this->set_post($_POST);
+            if(in_array($this->get_content_type($header), array('application/x-www-form-urlencoded','multipart/form-data')))
+            {
+                $this->set_post($_POST);
+            }
+            else
+            {
+                 // just grab the raw post data
+                $fp = fopen('php://input','r');
+                $post = stream_get_contents($fp);
+                fclose($fp);
+                $this->set_post($post);
+            }
+            
         }
         
         // execute
@@ -103,6 +115,20 @@ class Proxy {
         
         // output html
         echo $body;
+    }
+    
+    /**
+     *  Get the content-type of the request
+     */
+    protected function get_content_type( $headers )
+    {
+        foreach( $headers as $name => $value ){
+            if( 'content-type' == strtolower($name) ){
+                $parts = explode(';', $value);
+                return strtolower($parts[0]);
+            }
+        }
+        return null;
     }
     
     /**
@@ -209,7 +235,7 @@ class Proxy {
                 $post[$key] = "@" . $name;
             }
         } 
-        else
+        else if( is_array( $post ) )
         {
             $post = http_build_query($post);
         }
