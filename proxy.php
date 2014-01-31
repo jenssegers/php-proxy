@@ -97,6 +97,8 @@ class Proxy {
                 $this->set_post($post);
             }
             
+        } elseif ($_SERVER["REQUEST_METHOD"] == "HEAD") {
+          curl_setopt($this->ch, CURLOPT_NOBODY, true);
         }
         
         // execute
