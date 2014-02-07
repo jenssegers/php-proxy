@@ -84,7 +84,7 @@ class Proxy {
         // forward post
         if ($_SERVER["REQUEST_METHOD"] == "POST")
         {
-            if(in_array($this->get_content_type($header), array('application/x-www-form-urlencoded','multipart/form-data')))
+            if(in_array($this->get_content_type($headers), array('application/x-www-form-urlencoded','multipart/form-data')))
             {
                 $this->set_post($_POST);
             }
