@@ -16,3 +16,9 @@ $config['https_port'] = 4433;
  * Timeout in seconds
  */
 $config['timeout'] = 5;
+
+/*
+ * HTTP Auth
+ */
+$config['user'] = 'user';
+$config['pass'] = 'pass';
