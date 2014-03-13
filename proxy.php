@@ -55,6 +55,11 @@ class Proxy {
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->config["timeout"]);
+        curl_setopt($this->ch, CURLOPT_USERAGENT, "PHP Proxy"); 
+        if (!empty($this->config['user']) && !empty($this->config['pass'])){
+            curl_setopt($this->ch, CURLOPT_USERPWD, "{$this->config['user']}:{$this->config['pass']}");
+            curl_setopt($this->ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        }
     }
     
     /**
