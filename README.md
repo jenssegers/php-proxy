@@ -13,7 +13,7 @@ Usage
 
 Browse to the proxy script's folder and enjoy the magic.
 
-The `forward` method accepts Symfony 2 request objects or request paths. When no argument is passed, it will automatically create a Symfony request object based on the current request.
+The `forward` method accepts Symfony request objects or request paths. When no argument is passed, it will automatically create a Symfony request object based on the current request.
 
 The `to` method redirects the previous Symfony request to the url that is passed as an argument. It returns a Symfony response that can then be sent to the browser or inspected.
 
