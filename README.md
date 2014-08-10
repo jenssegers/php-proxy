@@ -20,9 +20,15 @@ The `to` method redirects the previous Symfony request to the url that is passed
 Example:
 
 ```
-$proxy = new Proxy;
+use Symfony\Component\HttpFoundation\Request;
 
-$response = $proxy->forward()->to('http://myserver.com:8888/site');
+$request = Request::create(
+    '/hello-world',
+    'GET',
+    array('name' => 'Fabien')
+);
+
+$response = Proxy::forward($request)->to('http://myserver.com:8888/site');
 
 $response->send();
 ```

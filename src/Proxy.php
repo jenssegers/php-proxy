@@ -14,8 +14,10 @@ class Proxy {
 
     protected $rewriteLocation = false;
 
-    public function forward($request = null)
+    public static function forward($request = null)
     {
+        $instance = new static;
+
         if ( ! $request instanceof Request)
         {
             $path = $request;
@@ -27,9 +29,9 @@ class Proxy {
             }
         }
 
-        $this->request = $request;
+        $instance->request = $request;
 
-        return $this;
+        return $instance;
     }
 
     public function to($url)
