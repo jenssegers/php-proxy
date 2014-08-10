@@ -22,13 +22,16 @@ Example:
 ```
 use Symfony\Component\HttpFoundation\Request;
 
+// Create custom request.
 $request = Request::create(
     '/hello-world',
     'GET',
     array('name' => 'Fabien')
 );
 
+// Get proxy response.
 $response = Proxy::forward($request)->to('http://myserver.com:8888/site');
 
+// Output response to browser.
 $response->send();
 ```
