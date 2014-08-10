@@ -1,0 +1,9 @@
+{
+    "require": {
+        "symfony/http-foundation": "*",
+        "guzzlehttp/guzzle": "4.*"
+    },
+    "autoload": {
+        "classmap": ["src/Proxy.php"]
+    }
+}
