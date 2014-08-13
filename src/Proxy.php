@@ -85,21 +85,21 @@ class Proxy
         $response->removeHeader('transfer-encoding');
         $response->removeHeader('content-encoding');
 
-        if ($this->rewriteLocation and $response->hasHeader('location')) {
-            $location = parse_url($response->getHeader('location'));
-
-            $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
-
-            if (isset($location['path'])) {
-                $url .= $location['path'];
-            }
-
-            if (isset($location['query'])) {
-                $url .= '?' . $location['query'];
-            }
-
-            $response->setHeader('location', $url);
-        }
+//        if ($this->rewriteLocation and $response->hasHeader('location')) {
+//            $location = parse_url($response->getHeader('location'));
+//
+//            $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
+//
+//            if (isset($location['path'])) {
+//                $url .= $location['path'];
+//            }
+//
+//            if (isset($location['query'])) {
+//                $url .= '?' . $location['query'];
+//            }
+//
+//            $response->setHeader('location', $url);
+//        }
 
         return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
     }
