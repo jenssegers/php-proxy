@@ -2,8 +2,11 @@
 namespace Phpproxy;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Message\MessageFactory;
 use GuzzleHttp\Message\ResponseInterface;
+use Phpproxy\Request\Converter\DefaultRequestConverter;
+use Phpproxy\Request\Converter\RequestConverterInterface;
+use Phpproxy\Response\Converter\DefaultResponseConverter;
+use Phpproxy\Response\Converter\ResponseConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,14 +23,19 @@ class Proxy
     private $request;
 
     /**
-     * @var MessageFactory
-     */
-    private $messageFactory;
-
-    /**
      * @var ClientInterface
      */
     private $client;
+
+    /**
+     * @var RequestConverterInterface
+     */
+    private $requestConverter;
+
+    /**
+     * @var ResponseConverterInterface
+     */
+    private $responseConverter;
 
     /**
      * @param ClientInterface $client
@@ -37,8 +45,42 @@ class Proxy
     {
         $this->request = ($request instanceof Request) ? $request : Request::create($request, 'GET', $_GET, $_COOKIE, $_FILES, $_SERVER);
 
-        $this->messageFactory = new MessageFactory();
+        $this->requestConverter = new DefaultRequestConverter();
+        $this->responseConverter = new DefaultResponseConverter();
+
         $this->client = $client;
+    }
+
+    /**
+     * @return RequestConverterInterface
+     */
+    public function getRequestConverter()
+    {
+        return $this->requestConverter;
+    }
+
+    /**
+     * @param RequestConverterInterface $requestConverter
+     */
+    public function setRequestConverter($requestConverter)
+    {
+        $this->requestConverter = $requestConverter;
+    }
+
+    /**
+     * @return ResponseConverterInterface
+     */
+    public function getResponseConverter()
+    {
+        return $this->responseConverter;
+    }
+
+    /**
+     * @param ResponseConverterInterface $responseConverter
+     */
+    public function setResponseConverter($responseConverter)
+    {
+        $this->responseConverter = $responseConverter;
     }
 
     /**
@@ -47,7 +89,7 @@ class Proxy
      */
     public function to($url)
     {
-        $request = $this->convertToGuzzleRequest($this->request);
+        $request = $this->requestConverter->convert($this->request);
         $request->setUrl($url);
 
         $response = $this->client->send($request);
@@ -66,16 +108,6 @@ class Proxy
         return $this;
     }
 
-
-    /**
-     * @param Request $original
-     * @return \GuzzleHttp\Message\RequestInterface
-     */
-    private function convertToGuzzleRequest(Request $original)
-    {
-        return $this->messageFactory->fromMessage((string) $original);
-    }
-
     /**
      * @param ResponseInterface $response
      * @return Response
@@ -85,23 +117,23 @@ class Proxy
         $response->removeHeader('transfer-encoding');
         $response->removeHeader('content-encoding');
 
-//        if ($this->rewriteLocation and $response->hasHeader('location')) {
-//            $location = parse_url($response->getHeader('location'));
-//
-//            $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
-//
-//            if (isset($location['path'])) {
-//                $url .= $location['path'];
-//            }
-//
-//            if (isset($location['query'])) {
-//                $url .= '?' . $location['query'];
-//            }
-//
-//            $response->setHeader('location', $url);
-//        }
+        if ($this->rewriteLocation and $response->hasHeader('location')) {
+            $location = parse_url($response->getHeader('location'));
 
-        return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
+            $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
+
+            if (isset($location['path'])) {
+                $url .= $location['path'];
+            }
+
+            if (isset($location['query'])) {
+                $url .= '?' . $location['query'];
+            }
+
+            $response->setHeader('location', $url);
+        }
+
+        return $this->responseConverter->convert($response);
     }
 
 }
