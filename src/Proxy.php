@@ -11,14 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 class Proxy
 {
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var bool
      */
     private $rewriteLocation = false;
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * @var MessageFactory
@@ -32,24 +32,18 @@ class Proxy
 
     /**
      * @param ClientInterface $client
-     * @param null|string|Request $forwardTo
+     * @param null|Request|string $request
      */
-    public function __construct(ClientInterface $client, $forwardTo = null)
+    public function __construct(ClientInterface $client, $request = null)
     {
-        $request = ($forwardTo instanceof Request) ? $forwardTo : Request::createFromGlobals();
-
-        if (is_string($forwardTo)) {
-            $uri = '/' . ltrim($forwardTo, '/');
-            $request->server->set('REQUEST_URI', $uri);
-        }
+        $this->request = ($request instanceof Request) ? $request : Request::create($request, 'GET', $_GET, $_COOKIE, $_FILES, $_SERVER);
 
         $this->messageFactory = new MessageFactory();
-        $this->request = $request;
         $this->client = $client;
     }
 
     /**
-     * @param $url
+     * @param string $url
      * @return Response
      */
     public function to($url)
