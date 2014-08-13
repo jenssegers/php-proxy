@@ -4,7 +4,6 @@ namespace Phpproxy;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Message\MessageFactory;
 use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Post\PostFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,9 +31,9 @@ class Proxy
 
     /**
      * @param ClientInterface $client
-     * @param null|Request|string $request
+     * @param Request|string $request
      */
-    public function __construct(ClientInterface $client, $request = null)
+    public function __construct(ClientInterface $client, $request)
     {
         $this->request = ($request instanceof Request) ? $request : Request::create($request, 'GET', $_GET, $_COOKIE, $_FILES, $_SERVER);
 
