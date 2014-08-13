@@ -74,11 +74,7 @@ class Proxy
      */
     private function convertToGuzzleRequest(Request $original)
     {
-        $request = $this->messageFactory->fromMessage((string) $original);
-
-        $request->removeHeader('host');
-
-        return $request;
+        return $this->messageFactory->fromMessage((string) $original);
     }
 
     /**
