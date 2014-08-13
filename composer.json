@@ -7,6 +7,11 @@
         {
             "name": "Jens Segers",
             "homepage": "http://jenssegers.be"
+        },
+        {
+            "name": "Ota Mares",
+            "email": "o.mares@rebuy.de",
+            "homepage": "http://www.rebuy.de"
         }
     ],
     "require": {

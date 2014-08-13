@@ -1,7 +1,6 @@
 <?php
 namespace Phpproxy;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Message\MessageFactory;
 use GuzzleHttp\Message\ResponseInterface;
@@ -32,12 +31,11 @@ class Proxy
     private $client;
 
     /**
-     * @param null $forwardTo
-     * @return static
+     * @param ClientInterface $client
+     * @param null|string|Request $forwardTo
      */
-    public static function forward($forwardTo = null)
+    public function __construct(ClientInterface $client, $forwardTo = null)
     {
-        $instance = new static;
         $request = ($forwardTo instanceof Request) ? $forwardTo : Request::createFromGlobals();
 
         if (is_string($forwardTo)) {
@@ -45,11 +43,9 @@ class Proxy
             $request->server->set('REQUEST_URI', $uri);
         }
 
-        $instance->messageFactory = new MessageFactory();
-        $instance->request = $request;
-        $instance->client = new Client();
-
-        return $instance;
+        $this->messageFactory = new MessageFactory();
+        $this->request = $request;
+        $this->client = $client;
     }
 
     /**
