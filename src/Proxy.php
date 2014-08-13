@@ -1,105 +1,169 @@
 <?php
+namespace Phpproxy;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Post\PostFile;
-use GuzzleHttp\Message\MessageFactory;
-use GuzzleHttp\Message\Response as GuzzleRequest;
-use GuzzleHttp\Message\Response as GuzzleResponse;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Message\ResponseInterface;
+use Phpproxy\Request\Converter\DefaultRequestConverter;
+use Phpproxy\Request\Converter\RequestConverterInterface;
+use Phpproxy\Request\Filter\RequestFilterInterface;
+use Phpproxy\Response\Converter\DefaultResponseConverter;
+use Phpproxy\Response\Converter\ResponseConverterInterface;
+use Phpproxy\Response\Filter\ResponseFilterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Proxy {
+class Proxy
+{
+    /**
+     * @var Request
+     */
+    private $symfonyRequest;
 
-    protected $request;
+    /**
+     * @var ClientInterface
+     */
+    private $client;
 
-    protected $rewriteLocation = false;
+    /**
+     * @var RequestConverterInterface
+     */
+    private $requestConverter;
 
-    public static function forward($request = null)
+    /**
+     * @var ResponseConverterInterface
+     */
+    private $responseConverter;
+
+    /**
+     * @var RequestFilterInterface[]
+     */
+    private $requestFilter = [];
+
+    /**
+     * @var ResponseFilterInterface[]
+     */
+    private $responseFilter = [];
+
+    /**
+     * @param ClientInterface $client
+     * @param Request|string $request
+     */
+    public function __construct(ClientInterface $client, $request)
     {
-        $instance = new static;
+        $this->symfonyRequest = ($request instanceof Request) ? $request : Request::create($request, 'GET', $_GET, $_COOKIE, $_FILES, $_SERVER);
 
-        if ( ! $request instanceof Request)
-        {
-            $path = $request;
-            $request = Request::createFromGlobals();
+        $this->requestConverter = new DefaultRequestConverter();
+        $this->responseConverter = new DefaultResponseConverter();
 
-            if (is_string($path))
-            {
-                $request->server->set('REQUEST_URI', '/' . ltrim($path, '/'));
-            }
-        }
-
-        $instance->request = $request;
-
-        return $instance;
+        $this->client = $client;
     }
 
+    /**
+     * @return RequestConverterInterface
+     */
+    public function getRequestConverter()
+    {
+        return $this->requestConverter;
+    }
+
+    /**
+     * @param RequestConverterInterface $requestConverter
+     */
+    public function setRequestConverter($requestConverter)
+    {
+        $this->requestConverter = $requestConverter;
+    }
+
+    /**
+     * @return ResponseConverterInterface
+     */
+    public function getResponseConverter()
+    {
+        return $this->responseConverter;
+    }
+
+    /**
+     * @param ResponseConverterInterface $responseConverter
+     */
+    public function setResponseConverter($responseConverter)
+    {
+        $this->responseConverter = $responseConverter;
+    }
+
+    /**
+     * @param $requestFilter RequestFilterInterface[]
+     */
+    public function setRequestFilter(array $requestFilter)
+    {
+        $this->requestFilter = $requestFilter;
+    }
+
+    /**
+     * @param RequestFilterInterface $filter
+     */
+    public function addRequestFilter(RequestFilterInterface $filter)
+    {
+        array_push($this->requestFilter, $filter);
+    }
+
+    /**
+     * @param $responseFilter ResponseFilterInterface[]
+     */
+    public function setResponseFilter(array $responseFilter)
+    {
+        $this->responseFilter = $responseFilter;
+    }
+
+    /**
+     * @param ResponseFilterInterface $filter
+     */
+    public function addResponseFilter(ResponseFilterInterface $filter)
+    {
+        array_push($this->responseFilter, $filter);
+    }
+
+    /**
+     * @param string $url
+     * @return Response
+     */
     public function to($url)
     {
-        $request = $this->convertRequest($this->request);
+        $request = $this->handleRequest($url);
 
-        $url = parse_url($url);
+        $response = $this->client->send($request);
 
-        if (isset($url['host']))   $request->setHost($url['host']);
-        if (isset($url['port']))   $request->setPort($url['port']);
-        if (isset($url['scheme'])) $request->setScheme($url['scheme']);
-        if (isset($url['path']))   $request->setPath($url['path'] . $guzzleRequest->getPath());
-
-        $client = new Client;
-
-        $response = $client->send($request);
-
-        return $this->convertResponse($response);
+        return $this->handleResponse($response);
     }
 
-    public function convertRequest(Request $original)
+    /**
+     * @param ResponseInterface $guzzleResponse
+     * @return Response
+     */
+    private function handleResponse(ResponseInterface $guzzleResponse)
     {
-        $factory = new MessageFactory;
+        $symfonyResponse = $this->responseConverter->convert($guzzleResponse);
 
-        $request = $factory->fromMessage((string) $original);
-
-        $request->removeHeader('host');
-
-        if ($original->files->count())
-        {
-            $request->removeHeader('content-type');
-
-            foreach ($original->files->all() as $key => $file)
-            {
-                $request->getBody()->addFile(new PostFile($key, fopen($file->getRealPath(), 'r'), $file->getClientOriginalName()));
-            }
+        foreach ($this->responseFilter AS $filter) {
+            $filter->filter($guzzleResponse, $symfonyResponse);
         }
 
-        return $request;
+        return $symfonyResponse;
     }
 
-    protected function convertResponse(GuzzleResponse $response)
+    /**
+     * @param string $url
+     * @return \GuzzleHttp\Message\RequestInterface
+     */
+    private function handleRequest($url)
     {
-        $response->removeHeader('transfer-encoding');
-        $response->removeHeader('content-encoding');
+        $guzzleRequest = $this->requestConverter->convert($this->symfonyRequest);
+        $guzzleRequest->setUrl($url);
 
-        if ($this->rewriteLocation and $response->hasHeader('location'))
-        {
-            $location = parse_url($response->getHeader('location'));
-
-            $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
-
-            if (isset($location['path']))  $url .= $location['path'];
-            if (isset($location['query'])) $url .= '?' . $location['query'];
-
-            $response->setHeader('location', $url);
+        foreach ($this->requestFilter as $filter) {
+            $filter->filter($this->symfonyRequest, $guzzleRequest);
         }
 
-        $response = new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
-
-        return $response;
-    }
-
-    public function rewriteLocation($bool = true)
-    {
-        $this->rewriteLocation = $bool;
-
-        return $this;
+        return $guzzleRequest;
     }
 
 }

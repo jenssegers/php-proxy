@@ -1,9 +1,26 @@
 {
+    "name": "phpproxy/phpproxy",
+    "type": "library",
+    "keywords": ["proxy"],
+    "homepage": "https://github.com/jenssegers/php-proxy",
+    "authors": [
+        {
+            "name": "Jens Segers",
+            "homepage": "http://jenssegers.be"
+        },
+        {
+            "name": "Ota Mares",
+            "email": "o.mares@rebuy.de",
+            "homepage": "http://www.rebuy.de"
+        }
+    ],
     "require": {
         "symfony/http-foundation": "*",
         "guzzlehttp/guzzle": "4.*"
     },
     "autoload": {
-        "classmap": ["src/Proxy.php"]
+        "psr-4": {
+            "Phpproxy\\": "src/"
+        }
     }
 }
