@@ -1,71 +1,97 @@
 <?php
+namespace Phpproxy;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Post\PostFile;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Message\MessageFactory;
-use GuzzleHttp\Message\Response as GuzzleRequest;
-use GuzzleHttp\Message\Response as GuzzleResponse;
+use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Post\PostFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Proxy {
+class Proxy
+{
+    /**
+     * @var Request
+     */
+    private $request;
 
-    protected $request;
+    /**
+     * @var bool
+     */
+    private $rewriteLocation = false;
 
-    protected $rewriteLocation = false;
+    /**
+     * @var MessageFactory
+     */
+    private $messageFactory;
 
-    public static function forward($request = null)
+    /**
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
+     * @param null $forwardTo
+     * @return static
+     */
+    public static function forward($forwardTo = null)
     {
         $instance = new static;
+        $request = ($forwardTo instanceof Request) ? $forwardTo : Request::createFromGlobals();
 
-        if ( ! $request instanceof Request)
-        {
-            $path = $request;
-            $request = Request::createFromGlobals();
-
-            if (is_string($path))
-            {
-                $request->server->set('REQUEST_URI', '/' . ltrim($path, '/'));
-            }
+        if (is_string($forwardTo)) {
+            $uri = '/' . ltrim($forwardTo, '/');
+            $request->server->set('REQUEST_URI', $uri);
         }
 
+        $instance->messageFactory = new MessageFactory();
         $instance->request = $request;
+        $instance->client = new Client();
 
         return $instance;
     }
 
+    /**
+     * @param $url
+     * @return Response
+     */
     public function to($url)
     {
-        $request = $this->convertRequest($this->request);
+        $request = $this->convertToGuzzleRequest($this->request);
+        $request->setUrl($url);
 
-        $url = parse_url($url);
+        $response = $this->client->send($request);
 
-        if (isset($url['host']))   $request->setHost($url['host']);
-        if (isset($url['port']))   $request->setPort($url['port']);
-        if (isset($url['scheme'])) $request->setScheme($url['scheme']);
-        if (isset($url['path']))   $request->setPath($url['path'] . $guzzleRequest->getPath());
-
-        $client = new Client;
-
-        $response = $client->send($request);
-
-        return $this->convertResponse($response);
+        return $this->convertToSymfonyResponse($response);
     }
 
-    public function convertRequest(Request $original)
+    /**
+     * @param bool $bool
+     * @return $this
+     */
+    public function rewriteLocation($bool = true)
     {
-        $factory = new MessageFactory;
+        $this->rewriteLocation = $bool;
 
-        $request = $factory->fromMessage((string) $original);
+        return $this;
+    }
+
+
+    /**
+     * @param Request $original
+     * @return \GuzzleHttp\Message\RequestInterface
+     */
+    private function convertToGuzzleRequest(Request $original)
+    {
+        $request = $this->messageFactory->fromMessage((string) $original);
 
         $request->removeHeader('host');
 
-        if ($original->files->count())
-        {
+        if ($original->files->count()) {
             $request->removeHeader('content-type');
 
-            foreach ($original->files->all() as $key => $file)
-            {
+            foreach ($original->files->all() as $key => $file) {
                 $request->getBody()->addFile(new PostFile($key, fopen($file->getRealPath(), 'r'), $file->getClientOriginalName()));
             }
         }
@@ -73,33 +99,32 @@ class Proxy {
         return $request;
     }
 
-    protected function convertResponse(GuzzleResponse $response)
+    /**
+     * @param ResponseInterface $response
+     * @return Response
+     */
+    private function convertToSymfonyResponse(ResponseInterface $response)
     {
         $response->removeHeader('transfer-encoding');
         $response->removeHeader('content-encoding');
 
-        if ($this->rewriteLocation and $response->hasHeader('location'))
-        {
+        if ($this->rewriteLocation and $response->hasHeader('location')) {
             $location = parse_url($response->getHeader('location'));
 
             $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
 
-            if (isset($location['path']))  $url .= $location['path'];
-            if (isset($location['query'])) $url .= '?' . $location['query'];
+            if (isset($location['path'])) {
+                $url .= $location['path'];
+            }
+
+            if (isset($location['query'])) {
+                $url .= '?' . $location['query'];
+            }
 
             $response->setHeader('location', $url);
         }
 
-        $response = new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
-
-        return $response;
-    }
-
-    public function rewriteLocation($bool = true)
-    {
-        $this->rewriteLocation = $bool;
-
-        return $this;
+        return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
     }
 
 }
