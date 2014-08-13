@@ -78,14 +78,6 @@ class Proxy
 
         $request->removeHeader('host');
 
-        if ($original->files->count()) {
-            $request->removeHeader('content-type');
-
-            foreach ($original->files->all() as $key => $file) {
-                $request->getBody()->addFile(new PostFile($key, fopen($file->getRealPath(), 'r'), $file->getClientOriginalName()));
-            }
-        }
-
         return $request;
     }
 
