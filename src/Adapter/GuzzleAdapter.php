@@ -1,6 +1,5 @@
 <?php
-namespace Phpproxy\Adapter;
-
+namespace Proxy\Adapter;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\MessageFactory;
@@ -48,7 +47,7 @@ class GuzzleAdapter implements AdapterInterface
      */
     private function convertRequest(Request $request)
     {
-        return $this->messageFactory->fromMessage((string) $request);
+        return $this->messageFactory->fromMessage((string)$request);
     }
 
     /**

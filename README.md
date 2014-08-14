@@ -19,7 +19,7 @@ Example:
 
 ```
 use Symfony\Component\HttpFoundation\Request;
-use Phpproxy\Factory;
+use Proxy\Factory;
 
 // Create custom request.
 $request = Request::create(

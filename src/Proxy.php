@@ -1,9 +1,9 @@
 <?php
-namespace Phpproxy;
+namespace Proxy;
 
-use Phpproxy\Request\Filter\RequestFilterInterface;
-use Phpproxy\Response\Filter\ResponseFilterInterface;
-use Phpproxy\Adapter\AdapterInterface;
+use Proxy\Adapter\AdapterInterface;
+use Proxy\Request\Filter\RequestFilterInterface;
+use Proxy\Response\Filter\ResponseFilterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

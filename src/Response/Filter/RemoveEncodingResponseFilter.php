@@ -1,8 +1,6 @@
 <?php
-namespace Phpproxy\Response\Filter;
+namespace Proxy\Response\Filter;
 
-
-use GuzzleHttp\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class RemoveEncodingResponseFilter implements ResponseFilterInterface

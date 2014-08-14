@@ -1,7 +1,6 @@
 <?php
-namespace Phpproxy\Request\Filter;
+namespace Proxy\Request\Filter;
 
-use GuzzleHttp\Message\RequestInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 interface RequestFilterInterface

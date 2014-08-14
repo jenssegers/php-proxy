@@ -1,9 +1,8 @@
 <?php
-
-namespace Phpproxy;
+namespace Proxy;
 
 use GuzzleHttp\Client;
-use Phpproxy\Adapter\GuzzleAdapter;
+use Proxy\Adapter\GuzzleAdapter;
 use Symfony\Component\HttpFoundation\Request;
 
 class Factory
