@@ -33,7 +33,7 @@ class Proxy
     }
 
     /**
-     * @param $requestFilter RequestFilterInterface[]
+     * @param RequestFilterInterface[] $requestFilter
      */
     public function setRequestFilter(array $requestFilter)
     {
@@ -49,7 +49,7 @@ class Proxy
     }
 
     /**
-     * @param $responseFilter ResponseFilterInterface[]
+     * @param ResponseFilterInterface[] $responseFilter
      */
     public function setResponseFilter(array $responseFilter)
     {
@@ -88,9 +88,11 @@ class Proxy
      */
     private function applyRequestFilter(Request $symfonyRequest)
     {
-        foreach ($this->requestFilter as $filter) {
-            $filter->filter($symfonyRequest);
-        }
+        $applyFilter = function(RequestFilterInterface $filter) use ($symfonyRequest) {
+            $filter->filterRequest($symfonyRequest);
+        };
+
+        array_map($applyFilter, $this->requestFilter);
 
         return $symfonyRequest;
     }
@@ -101,9 +103,11 @@ class Proxy
      */
     private function applyResponseFilter(Response $symfonyResponse)
     {
-        foreach ($this->responseFilter AS $filter) {
-            $filter->filter($symfonyResponse);
-        }
+        $applyFilter = function(ResponseFilterInterface $filter) use ($symfonyResponse) {
+            $filter->filterResponse($symfonyResponse);
+        };
+
+        array_map($applyFilter, $this->responseFilter);
 
         return $symfonyResponse;
     }

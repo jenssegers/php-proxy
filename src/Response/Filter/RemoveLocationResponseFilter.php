@@ -12,9 +12,9 @@ class RemoveLocationResponseFilter implements ResponseFilterInterface
      * @param Response $symfonyResponse
      * @return Response
      */
-    public function filter(Response $symfonyResponse)
+    public function filterResponse(Response $symfonyResponse)
     {
-        if ($symfonyResponse->hasHeader(self::$HEADER_NAME)) {
+        if ($symfonyResponse->headers->has(self::$HEADER_NAME)) {
             $symfonyResponse->headers->set('X-Proxy-Location', $symfonyResponse->headers->get(self::$HEADER_NAME));
             $symfonyResponse->headers->remove(self::$HEADER_NAME);
         }

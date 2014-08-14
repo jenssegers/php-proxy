@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class GuzzleAdapter implements AdapterInterface
 {
+    /**
+     * @var MessageFactory
+     */
     private $messageFactory;
 
     /**
@@ -23,7 +26,7 @@ class GuzzleAdapter implements AdapterInterface
     public function __construct(Client $client)
     {
         $this->client = $client;
-        $this->messageFactory = $this->messageFactory = new MessageFactory();
+        $this->messageFactory = new MessageFactory();
     }
 
     /**

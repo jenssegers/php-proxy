@@ -9,5 +9,5 @@ interface RequestFilterInterface
      * @param Request $symfonyRequest
      * @return Request
      */
-    public function filter(Request $symfonyRequest);
+    public function filterRequest(Request $symfonyRequest);
 }
