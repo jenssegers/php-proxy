@@ -1,10 +1,14 @@
 <?php
 use Phpproxy\Factory;
+use Phpproxy\Response\Filter\RemoveEncodingResponseFilter;
 use Symfony\Component\HttpFoundation\Request;
 
 require 'vendor/autoload.php';
 
-$response = Factory::create(Request::createFromGlobals())->to('https://www.reddit.com');
+$proxy = Factory::create(Request::createFromGlobals());
+$proxy->addResponseFilter(new RemoveEncodingResponseFilter());
+
+$response = $proxy->to('http://www.example.com');
 
 // Output response to browser.
-$response->send();
+var_dump((string) $response);
