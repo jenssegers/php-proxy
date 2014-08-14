@@ -1,6 +1,6 @@
 <?php
-use Phpproxy\Factory;
-use Phpproxy\Response\Filter\RemoveEncodingResponseFilter;
+use Proxy\Factory;
+use Proxy\Response\Filter\RemoveEncodingResponseFilter;
 use Symfony\Component\HttpFoundation\Request;
 
 require 'vendor/autoload.php';

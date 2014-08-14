@@ -1,5 +1,5 @@
 <?php
-namespace Phpproxy\Adapter;
+namespace Proxy\Adapter;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
