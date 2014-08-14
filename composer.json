@@ -3,6 +3,7 @@
     "type": "library",
     "keywords": ["proxy"],
     "homepage": "https://github.com/jenssegers/php-proxy",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jens Segers",
@@ -15,8 +16,8 @@
         }
     ],
     "require": {
-        "symfony/http-foundation": "*",
-        "guzzlehttp/guzzle": "4.*"
+        "symfony/http-foundation": "~2.5.3",
+        "guzzlehttp/guzzle": "~4.1.7"
     },
     "autoload": {
         "psr-4": {
