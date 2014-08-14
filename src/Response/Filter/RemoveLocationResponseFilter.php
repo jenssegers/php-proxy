@@ -7,16 +7,17 @@ use Symfony\Component\HttpFoundation\Response;
 class RemoveLocationResponseFilter implements ResponseFilterInterface
 {
 
+    private static $HEADER_NAME = 'location';
+
     /**
-     * @param ResponseInterface $guzzleResponse
      * @param Response $symfonyResponse
      * @return Response
      */
-    public function filter(ResponseInterface $guzzleResponse, Response $symfonyResponse)
+    public function filter(Response $symfonyResponse)
     {
-        if ($guzzleResponse->hasHeader('location')) {
-            $symfonyResponse->headers->set('X-Phpproxy-Location', $guzzleResponse->getHeader('location'));
-            $symfonyResponse->headers->remove('location');
+        if ($symfonyResponse->hasHeader(self::$HEADER_NAME)) {
+            $symfonyResponse->headers->set('X-Phpproxy-Location', $symfonyResponse->headers->get(self::$HEADER_NAME));
+            $symfonyResponse->headers->remove(self::$HEADER_NAME);
         }
 
         return $symfonyResponse;

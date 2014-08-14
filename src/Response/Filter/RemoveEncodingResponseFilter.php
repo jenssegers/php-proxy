@@ -9,11 +9,10 @@ class RemoveEncodingResponseFilter implements ResponseFilterInterface
 {
 
     /**
-     * @param ResponseInterface $guzzleResponse
      * @param Response $symfonyResponse
      * @return Response
      */
-    public function filter(ResponseInterface $guzzleResponse, Response $symfonyResponse)
+    public function filter(Response $symfonyResponse)
     {
         $symfonyResponse->headers->remove('transfer-encoding');
         $symfonyResponse->headers->remove('content-encoding');

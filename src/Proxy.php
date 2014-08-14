@@ -1,34 +1,18 @@
 <?php
 namespace Phpproxy;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\ResponseInterface;
-use Phpproxy\Request\Converter\DefaultRequestConverter;
-use Phpproxy\Request\Converter\RequestConverterInterface;
 use Phpproxy\Request\Filter\RequestFilterInterface;
-use Phpproxy\Response\Converter\DefaultResponseConverter;
-use Phpproxy\Response\Converter\ResponseConverterInterface;
 use Phpproxy\Response\Filter\ResponseFilterInterface;
+use Phpproxy\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class Proxy
 {
     /**
-     * @var ClientInterface
+     * @var AdapterInterface
      */
-    private $client;
-
-    /**
-     * @var RequestConverterInterface
-     */
-    private $requestConverter;
-
-    /**
-     * @var ResponseConverterInterface
-     */
-    private $responseConverter;
+    private $adapter;
 
     /**
      * @var RequestFilterInterface[]
@@ -41,46 +25,11 @@ class Proxy
     private $responseFilter = [];
 
     /**
-     * @param ClientInterface $client
+     * @param AdapterInterface $adapter
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(AdapterInterface $adapter)
     {
-        $this->requestConverter = new DefaultRequestConverter();
-        $this->responseConverter = new DefaultResponseConverter();
-
-        $this->client = $client;
-    }
-
-    /**
-     * @return RequestConverterInterface
-     */
-    public function getRequestConverter()
-    {
-        return $this->requestConverter;
-    }
-
-    /**
-     * @param RequestConverterInterface $requestConverter
-     */
-    public function setRequestConverter($requestConverter)
-    {
-        $this->requestConverter = $requestConverter;
-    }
-
-    /**
-     * @return ResponseConverterInterface
-     */
-    public function getResponseConverter()
-    {
-        return $this->responseConverter;
-    }
-
-    /**
-     * @param ResponseConverterInterface $responseConverter
-     */
-    public function setResponseConverter($responseConverter)
-    {
-        $this->responseConverter = $responseConverter;
+        $this->adapter = $adapter;
     }
 
     /**
@@ -122,40 +71,38 @@ class Proxy
      */
     public function send(Request $symfonyRequest, $proxyUrl)
     {
-        $guzzleRequest = $this->handleRequest($symfonyRequest, $proxyUrl);
+        $this->applyRequestFilter($symfonyRequest);
 
-        $guzzleResponse = $this->client->send($guzzleRequest);
+        $symfonyResponse = $this->adapter->send($symfonyRequest, $proxyUrl);
 
-        return $this->handleResponse($guzzleResponse);
+        $this->applyResponseFilter($symfonyResponse);
+
+        return $symfonyResponse;
+
+
     }
 
     /**
      * @param Request $symfonyRequest
-     * @param string $proxyUrl
-     * @return RequestInterface
+     * @return Request
      */
-    private function handleRequest(Request $symfonyRequest, $proxyUrl)
+    private function applyRequestFilter(Request $symfonyRequest)
     {
-        $guzzleRequest = $this->requestConverter->convert($symfonyRequest);
-        $guzzleRequest->setUrl($proxyUrl);
-
         foreach ($this->requestFilter as $filter) {
-            $filter->filter($symfonyRequest, $guzzleRequest);
+            $filter->filter($symfonyRequest);
         }
 
-        return $guzzleRequest;
+        return $symfonyRequest;
     }
 
     /**
-     * @param ResponseInterface $guzzleResponse
+     * @param Response $symfonyResponse
      * @return Response
      */
-    private function handleResponse(ResponseInterface $guzzleResponse)
+    private function applyResponseFilter(Response $symfonyResponse)
     {
-        $symfonyResponse = $this->responseConverter->convert($guzzleResponse);
-
         foreach ($this->responseFilter AS $filter) {
-            $filter->filter($guzzleResponse, $symfonyResponse);
+            $filter->filter($symfonyResponse);
         }
 
         return $symfonyResponse;

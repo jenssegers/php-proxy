@@ -3,6 +3,7 @@
 namespace Phpproxy;
 
 use GuzzleHttp\Client;
+use Phpproxy\Adapter\GuzzleAdapter;
 use Symfony\Component\HttpFoundation\Request;
 
 class Factory
@@ -13,7 +14,9 @@ class Factory
     public static function create()
     {
         $client = new Client();
-        return new Proxy($client);
+        $adapter = new GuzzleAdapter($client);
+
+        return new Proxy($adapter);
     }
 
     /**

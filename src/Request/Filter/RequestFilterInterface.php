@@ -8,8 +8,7 @@ interface RequestFilterInterface
 {
     /**
      * @param Request $symfonyRequest
-     * @param RequestInterface $guzzleRequest
      * @return Request
      */
-    public function filter(Request $symfonyRequest, RequestInterface $guzzleRequest);
+    public function filter(Request $symfonyRequest);
 }
