@@ -1,5 +1,5 @@
 {
-    "name": "phpproxy/phpproxy",
+    "name": "phpproxy/proxy",
     "type": "library",
     "keywords": ["proxy"],
     "homepage": "https://github.com/jenssegers/php-proxy",
@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Phpproxy\\": "src/"
+            "Proxy\\": "src/"
         }
     }
 }
