@@ -8,12 +8,20 @@ use Symfony\Component\HttpFoundation\Request;
 class Factory
 {
     /**
-     * @param Request|string $request
      * @return Proxy
      */
-    public static function create($request)
+    public static function create()
     {
         $client = new Client();
-        return new Proxy($client, $request);
+        return new Proxy($client);
+    }
+
+    /**
+     * @param string $url
+     * @return Request
+     */
+    public static function createSimpleRequest($url)
+    {
+        return Request::create($url, 'GET', $_GET, $_COOKIE, $_FILES, $_SERVER);
     }
 }

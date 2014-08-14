@@ -2,6 +2,7 @@
 namespace Phpproxy;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use Phpproxy\Request\Converter\DefaultRequestConverter;
 use Phpproxy\Request\Converter\RequestConverterInterface;
@@ -14,11 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Proxy
 {
-    /**
-     * @var Request
-     */
-    private $symfonyRequest;
-
     /**
      * @var ClientInterface
      */
@@ -46,12 +42,9 @@ class Proxy
 
     /**
      * @param ClientInterface $client
-     * @param Request|string $request
      */
-    public function __construct(ClientInterface $client, $request)
+    public function __construct(ClientInterface $client)
     {
-        $this->symfonyRequest = ($request instanceof Request) ? $request : Request::create($request, 'GET', $_GET, $_COOKIE, $_FILES, $_SERVER);
-
         $this->requestConverter = new DefaultRequestConverter();
         $this->responseConverter = new DefaultResponseConverter();
 
@@ -123,16 +116,34 @@ class Proxy
     }
 
     /**
-     * @param string $url
+     * @param Request $symfonyRequest
+     * @param string $proxyUrl
      * @return Response
      */
-    public function to($url)
+    public function send(Request $symfonyRequest, $proxyUrl)
     {
-        $request = $this->handleRequest($url);
+        $guzzleRequest = $this->handleRequest($symfonyRequest, $proxyUrl);
 
-        $response = $this->client->send($request);
+        $guzzleResponse = $this->client->send($guzzleRequest);
 
-        return $this->handleResponse($response);
+        return $this->handleResponse($guzzleResponse);
+    }
+
+    /**
+     * @param Request $symfonyRequest
+     * @param string $proxyUrl
+     * @return RequestInterface
+     */
+    private function handleRequest(Request $symfonyRequest, $proxyUrl)
+    {
+        $guzzleRequest = $this->requestConverter->convert($symfonyRequest);
+        $guzzleRequest->setUrl($proxyUrl);
+
+        foreach ($this->requestFilter as $filter) {
+            $filter->filter($symfonyRequest, $guzzleRequest);
+        }
+
+        return $guzzleRequest;
     }
 
     /**
@@ -148,22 +159,6 @@ class Proxy
         }
 
         return $symfonyResponse;
-    }
-
-    /**
-     * @param string $url
-     * @return \GuzzleHttp\Message\RequestInterface
-     */
-    private function handleRequest($url)
-    {
-        $guzzleRequest = $this->requestConverter->convert($this->symfonyRequest);
-        $guzzleRequest->setUrl($url);
-
-        foreach ($this->requestFilter as $filter) {
-            $filter->filter($this->symfonyRequest, $guzzleRequest);
-        }
-
-        return $guzzleRequest;
     }
 
 }
