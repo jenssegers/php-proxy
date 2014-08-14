@@ -1,11 +1,11 @@
 <?php
-use Proxy\Factory;
+use Proxy\Adapter\Guzzle\GuzzleFactory;
 use Proxy\Response\Filter\RemoveEncodingResponseFilter;
 use Symfony\Component\HttpFoundation\Request;
 
 require 'vendor/autoload.php';
 
-$proxy = Factory::create();
+$proxy = GuzzleFactory::create();
 $proxy->addResponseFilter(new RemoveEncodingResponseFilter());
 
 $request = Request::createFromGlobals();

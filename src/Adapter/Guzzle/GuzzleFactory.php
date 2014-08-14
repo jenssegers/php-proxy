@@ -1,11 +1,11 @@
 <?php
-namespace Proxy;
+namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
-use Proxy\Adapter\GuzzleAdapter;
+use Proxy\Proxy;
 use Symfony\Component\HttpFoundation\Request;
 
-class Factory
+class GuzzleFactory
 {
     /**
      * @return Proxy

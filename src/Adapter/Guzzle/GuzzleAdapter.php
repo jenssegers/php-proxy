@@ -1,10 +1,11 @@
 <?php
-namespace Proxy\Adapter;
+namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\MessageFactory;
 use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
+use Proxy\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
