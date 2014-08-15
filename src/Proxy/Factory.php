@@ -1,5 +1,6 @@
 <?php namespace Proxy;
 
+use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +64,7 @@ class Factory {
      * Create an adapter instance based on the adapter name.
      *
      * @param  string $adapter
+     * @throws Exception\InvalidArgumentException
      * @return AdapterInterface
      */
     protected static function createAdapter($adapter)

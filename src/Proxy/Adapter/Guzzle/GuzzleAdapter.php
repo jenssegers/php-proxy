@@ -3,6 +3,8 @@ namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\MessageFactory;
+use GuzzleHttp\Message\MessageFactoryInterface;
+use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
 use Proxy\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +30,9 @@ class GuzzleAdapter implements AdapterInterface {
      * Construct a Guzzle based HTTP adapter.
      *
      * @param Client $client
-     * @param MessageFactory $messageFactory
+     * @param \GuzzleHttp\Message\MessageFactoryInterface $messageFactory
      */
-    public function __construct(Client $client = null, MessageFactory $messageFactory = null)
+    public function __construct(Client $client = null, MessageFactoryInterface $messageFactory = null)
     {
         $this->client = $client ? : new Client;
 
