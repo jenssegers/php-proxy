@@ -39,6 +39,35 @@ $response = $proxy->forward($request)->to('http://example.com');
 $response->send();
 ```
 
+You can also proxy "custom" requests:
+
+```
+use Proxy\Factory;
+use Proxy\Response\Filter\RemoveEncodingFilter;
+use Symfony\Component\HttpFoundation\Request;
+
+require 'vendor/autoload.php';
+
+// Create the proxy factory.
+$proxy = Factory::create();
+
+// Add a response filter that removes the encoding headers.
+$proxy->addResponseFilter(new RemoveEncodingFilter());
+
+// Create a custom request.
+$request = Request::create(
+    '/hello-world',
+    'GET',
+    array('name' => 'Fabien')
+);
+
+// Forward the request and get the response.
+$response = $proxy->forward($request)->to('http://example.com');
+
+// Output response to the browser.
+$response->send();
+```
+
 The following example uses a shortcut that is built into the factory:
 
 ```
