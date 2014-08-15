@@ -5,6 +5,7 @@ This is a HTTP/HTTPS proxy script that forwards requests to a different server a
 ## Installation
 
 Add `"phpproxy/proxy": "~3"` to your composer require section.  
+
 To use the provided `GuzzleAdapter` a Guzzle installation is required. If none present add `"guzzlehttp/guzzle": "~4.1.7"` as dependency.    
 
 
@@ -14,10 +15,10 @@ Clone this repository and install the dependencies using `composer install --dev
 
 ## Usage
 
-
 Browse to the proxy script's folder and enjoy the magic.
 
-The `send` method redirects the given Symfony request to the url that is passed as second argument. It returns a Symfony response that can then be sent to the browser or inspected.
+The `forward` method awaits the to be proxied Symfony request object. 
+Calling `to` redirects the configured request to the given url and returns a Symfony response.
 
 Example with GuzzleAdapter:
 
@@ -33,7 +34,7 @@ $request = Request::create(
 );
 
 // Get proxy response.
-$response = GuzzleFactory::create()->send($request, 'https://www.reddit.com')
+$response = GuzzleFactory::forward($request)->to('http://www.example.com')
 
 // Output response to browser.
 $response->send();

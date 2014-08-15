@@ -19,6 +19,15 @@ class GuzzleFactory
     }
 
     /**
+     * @param $symfonyRequest
+     * @return Proxy
+     */
+    public static function forward($symfonyRequest)
+    {
+        return self::create()->forward($symfonyRequest);
+    }
+
+    /**
      * @param string $url
      * @return Request
      */

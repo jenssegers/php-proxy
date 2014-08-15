@@ -10,6 +10,11 @@ use Symfony\Component\HttpFoundation\Response;
 class Proxy
 {
     /**
+     * @var Request
+     */
+    private $symfonyRequest;
+
+    /**
      * @var AdapterInterface
      */
     private $adapter;
@@ -66,20 +71,28 @@ class Proxy
 
     /**
      * @param Request $symfonyRequest
+     * @return Proxy
+     */
+    public function forward(Request $symfonyRequest)
+    {
+        $this->symfonyRequest = $symfonyRequest;
+
+        return $this;
+    }
+
+    /**
      * @param string $proxyUrl
      * @return Response
      */
-    public function send(Request $symfonyRequest, $proxyUrl)
+    public function to($proxyUrl)
     {
-        $this->applyRequestFilter($symfonyRequest);
+        $this->applyRequestFilter($this->symfonyRequest);
 
-        $symfonyResponse = $this->adapter->send($symfonyRequest, $proxyUrl);
+        $symfonyResponse = $this->adapter->send($this->symfonyRequest, $proxyUrl);
 
         $this->applyResponseFilter($symfonyResponse);
 
         return $symfonyResponse;
-
-
     }
 
     /**

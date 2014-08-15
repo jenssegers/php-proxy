@@ -9,7 +9,7 @@ $proxy = GuzzleFactory::create();
 $proxy->addResponseFilter(new RemoveEncodingResponseFilter());
 
 $request = Request::createFromGlobals();
-$response = $proxy->send($request, 'http://www.example.com');
+$response = $proxy->forward($request)->to('http://www.example.com');
 
 // Output response to browser.
 var_dump((string) $response);
