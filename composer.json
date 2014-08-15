@@ -1,5 +1,5 @@
 {
-    "name": "phpproxy/proxy",
+    "name": "jenssegers/proxy",
     "description": "Proxy library that forwards requests to the desired url and returns the response.",
     "type": "library",
     "keywords": ["proxy"],
@@ -17,13 +17,8 @@
         }
     ],
     "require": {
-        "symfony/http-foundation": "~2.5.3"
-    },
-    "require-dev": {
-        "guzzlehttp/guzzle": "~4.1.7"
-    },
-    "suggest": {
-        "guzzlehttp/guzzle": "Required by the GuzzleAdapter."
+        "symfony/http-foundation": "2.5.*",
+        "guzzlehttp/guzzle": "4.*"
     },
     "autoload": {
         "psr-4": {

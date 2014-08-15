@@ -1,134 +1,160 @@
-<?php
-namespace Proxy;
+<?php namespace Proxy;
 
-use Proxy\Adapter\AdapterInterface;
-use Proxy\Exception\UnexpectedValueException;
-use Proxy\Request\Filter\RequestFilterInterface;
-use Proxy\Response\Filter\ResponseFilterInterface;
+use Proxy\Adapter\Adapter;
+use Proxy\Request\Filter\RequestFilter;
+use Proxy\Response\Filter\ResponseFilter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Proxy
-{
+class Proxy {
+
     /**
+     * The Request instance.
+     *
      * @var Request
      */
-    private $symfonyRequest;
+    protected $request;
 
     /**
-     * @var AdapterInterface
+     * The adapter instance.
+     *
+     * @var Adapter
      */
-    private $adapter;
+    protected $adapter;
 
     /**
-     * @var RequestFilterInterface[]
+     * The registered request filters.
+     *
+     * @var array
      */
-    private $requestFilter = [];
+    protected $requestFilters = array();
 
     /**
-     * @var ResponseFilterInterface[]
+     * The registered response filters.
+     *
+     * @var array
      */
-    private $responseFilter = [];
+    protected $responseFilters = array();
 
     /**
-     * @param AdapterInterface $adapter
+     * Construct a Proxy instance.
+     *
+     * @param Adapter $adapter
      */
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(Adapter $adapter)
     {
         $this->adapter = $adapter;
     }
 
     /**
-     * @param RequestFilterInterface[] $requestFilter
+     * Prepare the proxy to forward a request instance.
+     *
+     * @param  Request $request
+     * @return $this
      */
-    public function setRequestFilter(array $requestFilter)
+    public function forward(Request $request)
     {
-        $this->requestFilter = $requestFilter;
-    }
-
-    /**
-     * @param RequestFilterInterface $filter
-     */
-    public function addRequestFilter(RequestFilterInterface $filter)
-    {
-        array_push($this->requestFilter, $filter);
-    }
-
-    /**
-     * @param ResponseFilterInterface[] $responseFilter
-     */
-    public function setResponseFilter(array $responseFilter)
-    {
-        $this->responseFilter = $responseFilter;
-    }
-
-    /**
-     * @param ResponseFilterInterface $filter
-     */
-    public function addResponseFilter(ResponseFilterInterface $filter)
-    {
-        array_push($this->responseFilter, $filter);
-    }
-
-    /**
-     * @param Request $symfonyRequest
-     * @return Proxy
-     */
-    public function forward(Request $symfonyRequest)
-    {
-        $this->symfonyRequest = $symfonyRequest;
+        $this->request = $request;
 
         return $this;
     }
 
     /**
-     * @param string $proxyUrl
-     * @throws Exception\UnexpectedValueException
+     * Forward the request to the target url and return the response.
+     *
+     * @param  string $target
      * @return Response
      */
-    public function to($proxyUrl)
+    public function to($target)
     {
-        if (is_null($this->symfonyRequest)) {
-            throw new UnexpectedValueException('Missing request.');
+        if (is_null($this->request))
+        {
+            throw new \UnexpectedValueException('Missing request instance.');
         }
 
-        $this->applyRequestFilter($this->symfonyRequest);
+        $this->applyRequestFilter($this->request);
 
-        $symfonyResponse = $this->adapter->send($this->symfonyRequest, $proxyUrl);
+        $response = $this->adapter->send($this->request, $target);
 
-        $this->applyResponseFilter($symfonyResponse);
+        $this->applyResponseFilter($response);
 
-        return $symfonyResponse;
+        return $response;
     }
 
     /**
-     * @param Request $symfonyRequest
+     * Overwrite the request filters array.
+     *
+     * @param array $filters
+     */
+    public function setRequestFilter(array $filters)
+    {
+        $this->requestFilters = $filters;
+    }
+
+    /**
+     * Register a request filter.
+     *
+     * @param RequestFilter $filter
+     */
+    public function addRequestFilter(RequestFilter $filter)
+    {
+        array_push($this->requestFilters, $filter);
+    }
+
+    /**
+     * Overwrite the response filters array.
+     *
+     * @param array $filters
+     */
+    public function setResponseFilter(array $filters)
+    {
+        $this->responseFilters = $filters;
+    }
+
+    /**
+     * Register a response filter.
+     *
+     * @param ResponseFilter $filter
+     */
+    public function addResponseFilter(ResponseFilter $filter)
+    {
+        array_push($this->responseFilters, $filter);
+    }
+
+    /**
+     * Apply request filters to the request instance.
+     *
+     * @param  Request $request
      * @return Request
      */
-    private function applyRequestFilter(Request $symfonyRequest)
+    protected function applyRequestFilter(Request $request)
     {
-        $applyFilter = function(RequestFilterInterface $filter) use ($symfonyRequest) {
-            $filter->filterRequest($symfonyRequest);
+        $callback = function(RequestFilter $filter) use ($request)
+        {
+            $filter->filter($request);
         };
 
-        array_map($applyFilter, $this->requestFilter);
+        array_map($callback, $this->requestFilters);
 
-        return $symfonyRequest;
+        return $request;
     }
 
     /**
-     * @param Response $symfonyResponse
+     * Apply response filters to the response instance.
+     *
+     * @param  Response $response
      * @return Response
      */
-    private function applyResponseFilter(Response $symfonyResponse)
+    protected function applyResponseFilter(Response $response)
     {
-        $applyFilter = function(ResponseFilterInterface $filter) use ($symfonyResponse) {
-            $filter->filterResponse($symfonyResponse);
+        $callback = function(ResponseFilter $filter) use ($response)
+        {
+            $filter->filter($response);
         };
 
-        array_map($applyFilter, $this->responseFilter);
+        array_map($callback, $this->responseFilters);
 
-        return $symfonyResponse;
+        return $response;
     }
 
 }

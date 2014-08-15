@@ -4,38 +4,56 @@ This is a HTTP/HTTPS proxy script that forwards requests to a different server a
 
 ## Installation
 
-Add `"phpproxy/proxy": "~3"` to your composer require section.  
+Add the package to your `composer.json` and run `composer update`.
 
-To use the provided `GuzzleAdapter` a Guzzle installation is required. If none present add `"guzzlehttp/guzzle": "~4.1.7"` as dependency.    
+{
+    "require": {
+        "jenssegers/proxy": "2.*"
+    }
+}
 
+## Examples
 
-## Demo / Testing
-
-Clone this repository and install the dependencies using `composer install --dev`. Run `index.example.php` in your browser or console.
-
-## Usage
-
-Browse to the proxy script's folder and enjoy the magic.
-
-The `forward` method awaits the to be proxied Symfony request object. 
-Calling `to` redirects the configured request to the given url and returns a Symfony response.
-
-Example with GuzzleAdapter:
+The following example creates a request object, based on the current browser request, and forwards it to `example.com`. The `RemoveEncodingFilter` removes the encoding headers from the original response so that the current webserver can set these correctly.
 
 ```
+use Proxy\Factory;
+use Proxy\Response\Filter\RemoveEncodingFilter;
 use Symfony\Component\HttpFoundation\Request;
-use Proxy\Adapter\Guzzle\GuzzleFactory;
 
-// Create custom request.
-$request = Request::create(
-    '/hello-world',
-    'GET',
-    array('name' => 'Fabien')
-);
+require 'vendor/autoload.php';
 
-// Get proxy response.
-$response = GuzzleFactory::forward($request)->to('http://www.example.com')
+// Create the proxy factory.
+$proxy = Factory::create();
 
-// Output response to browser.
+// Add a response filter that removes the encoding headers.
+$proxy->addResponseFilter(new RemoveEncodingFilter());
+
+// Create a Symfony request based on the current browser request.
+$request = Request::createFromGlobals();
+
+// Forward the request and get the response.
+$response = $proxy->forward($request)->to('http://example.com');
+
+// Output response to the browser.
+$response->send();
+```
+
+The following example uses a shortcut that is built into the factory:
+
+```
+use Proxy\Factory;
+use Proxy\Response\Filter\RemoveEncodingFilter;
+use Symfony\Component\HttpFoundation\Request;
+
+require 'vendor/autoload.php';
+
+// Create a Symfony request based on the current browser request.
+$request = Request::createFromGlobals();
+
+// Forward the request and get the response.
+$response = Factory::forward($request)->to('http://example.com');
+
+// Output response to the browser.
 $response->send();
 ```
