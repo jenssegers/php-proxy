@@ -1,11 +1,12 @@
 <?php
 namespace Proxy\Adapter\Dummy;
 
-use Proxy\Adapter\AdapterInterface;
+use Proxy\Adapter\Adapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DummyAdapter implements AdapterInterface {
+class DummyAdapter implements Adapter
+{
 
     /**
      * @param Request $request

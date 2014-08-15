@@ -44,11 +44,11 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_applies_request_filters()
     {
-        $filter = $this->getMockBuilder('\Proxy\Request\Filter\RequestFilterInterface')
+        $filter = $this->getMockBuilder('\Proxy\Request\Filter\RequestFilter')
             ->getMock();
 
         $filter->expects($this->once())
-            ->method('filterRequest');
+            ->method('filter');
 
         $this->proxy->addRequestFilter($filter);
 
@@ -60,11 +60,11 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_applies_response_filters()
     {
-        $filter = $this->getMockBuilder('\Proxy\Response\Filter\ResponseFilterInterface')
+        $filter = $this->getMockBuilder('\Proxy\Response\Filter\ResponseFilter')
             ->getMock();
 
         $filter->expects($this->once())
-            ->method('filterResponse');
+            ->method('filter');
 
         $this->proxy->addResponseFilter($filter);
 

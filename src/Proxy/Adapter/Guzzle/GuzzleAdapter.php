@@ -1,13 +1,15 @@
-<?php namespace Proxy\Adapter;
+<?php
+namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\MessageFactory;
-use GuzzleHttp\Message\RequestInterface;
 use GuzzleHttp\Message\ResponseInterface;
+use Proxy\Adapter\Adapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GuzzleAdapter implements Adapter {
+class GuzzleAdapter implements Adapter
+{
 
     /**
      * The Guzzle client instance.
@@ -31,22 +33,21 @@ class GuzzleAdapter implements Adapter {
      */
     public function __construct(Client $client = null, MessageFactory $messageFactory = null)
     {
-        $this->client = $client ?: new Client;
+        $this->client = $client ? : new Client;
 
-        $this->messageFactory = $messageFactory ?: new MessageFactory;
+        $this->messageFactory = $messageFactory ? : new MessageFactory;
     }
 
     /**
      * Send the request and return the response.
      *
      * @param  Symfony\Component\HttpFoundation\Request $symfonyRequest
-     * @param  string  $url
+     * @param  string $url
      * @return Symfony\Component\HttpFoundation\Response
      */
     public function send(Request $symfonyRequest, $url)
     {
         $guzzleRequest = $this->convertRequest($symfonyRequest);
-
         $guzzleRequest->setUrl($url);
 
         $guzzleResponse = $this->client->send($guzzleRequest);
@@ -62,7 +63,7 @@ class GuzzleAdapter implements Adapter {
      */
     protected function convertRequest(Request $request)
     {
-        return $this->messageFactory->fromMessage((string) $request);
+        return $this->messageFactory->fromMessage((string)$request);
     }
 
     /**
