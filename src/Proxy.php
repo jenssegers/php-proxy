@@ -2,6 +2,7 @@
 namespace Proxy;
 
 use Proxy\Adapter\AdapterInterface;
+use Proxy\Exception\UnexpectedValueException;
 use Proxy\Request\Filter\RequestFilterInterface;
 use Proxy\Response\Filter\ResponseFilterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,6 +10,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Proxy
 {
+    /**
+     * @var Request
+     */
+    private $symfonyRequest;
+
     /**
      * @var AdapterInterface
      */
@@ -66,20 +72,33 @@ class Proxy
 
     /**
      * @param Request $symfonyRequest
+     * @return Proxy
+     */
+    public function forward(Request $symfonyRequest)
+    {
+        $this->symfonyRequest = $symfonyRequest;
+
+        return $this;
+    }
+
+    /**
      * @param string $proxyUrl
+     * @throws Exception\UnexpectedValueException
      * @return Response
      */
-    public function send(Request $symfonyRequest, $proxyUrl)
+    public function to($proxyUrl)
     {
-        $this->applyRequestFilter($symfonyRequest);
+        if (is_null($this->symfonyRequest)) {
+            throw new UnexpectedValueException('Missing request.');
+        }
 
-        $symfonyResponse = $this->adapter->send($symfonyRequest, $proxyUrl);
+        $this->applyRequestFilter($this->symfonyRequest);
+
+        $symfonyResponse = $this->adapter->send($this->symfonyRequest, $proxyUrl);
 
         $this->applyResponseFilter($symfonyResponse);
 
         return $symfonyResponse;
-
-
     }
 
     /**
