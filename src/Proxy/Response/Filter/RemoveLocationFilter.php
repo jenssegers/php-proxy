@@ -4,21 +4,23 @@ namespace Proxy\Response\Filter;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class RemoveLocationFilter implements ResponseFilter
+class RemoveLocationFilter implements ResponseFilterInterface
 {
     const LOCATION = 'location';
 
     /**
-     * @param Response $symfonyResponse
+     * @param Response $response
      * @return Response
      */
-    public function filter(Response $symfonyResponse)
+    public function filter(Response $response)
     {
-        if ($symfonyResponse->headers->has(self::LOCATION)) {
-            $symfonyResponse->headers->set('X-Proxy-Location', $symfonyResponse->headers->get(self::LOCATION));
-            $symfonyResponse->headers->remove(self::LOCATION);
+        if ($response->headers->has(self::LOCATION))
+        {
+            $response->headers->set('X-Proxy-Location', $response->headers->get(self::LOCATION));
+
+            $response->headers->remove(self::LOCATION);
         }
 
-        return $symfonyResponse;
+        return $response;
     }
 }

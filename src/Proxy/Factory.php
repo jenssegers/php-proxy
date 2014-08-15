@@ -1,5 +1,6 @@
 <?php namespace Proxy;
 
+use Proxy\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +17,7 @@ class Factory {
      * Create a proxy instance.
      *
      * @param  string $adapter
-     * @return Proxy\Proxy
+     * @return Proxy
      */
     public static function create($adapter = null)
     {
@@ -30,8 +31,8 @@ class Factory {
     /**
      * Forward a request using the default adapter.
      *
-     * @param  Symfony\Component\HttpFoundation\Request $request
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  Request $request
+     * @return Response
      */
     public static function forward(Request $request)
     {
@@ -62,7 +63,7 @@ class Factory {
      * Create an adapter instance based on the adapter name.
      *
      * @param  string $adapter
-     * @return Proxy\Adapter
+     * @return AdapterInterface
      */
     protected static function createAdapter($adapter)
     {
@@ -73,7 +74,7 @@ class Factory {
             return new $class;
         }
 
-        throw new \InvalidArgumentException("Adapter [$adapter] not found.");
+        throw new InvalidArgumentException("Adapter [$adapter] not found.");
     }
 
 }

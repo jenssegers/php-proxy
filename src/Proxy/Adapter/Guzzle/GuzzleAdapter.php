@@ -4,32 +4,31 @@ namespace Proxy\Adapter\Guzzle;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\MessageFactory;
 use GuzzleHttp\Message\ResponseInterface;
-use Proxy\Adapter\Adapter;
+use Proxy\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class GuzzleAdapter implements Adapter
-{
+class GuzzleAdapter implements AdapterInterface {
 
     /**
      * The Guzzle client instance.
      *
-     * @var GuzzleHttp\Client
+     * @var Client
      */
     protected $client;
 
     /**
      * The Guzzle message factory instance.
      *
-     * @var GuzzleHttp\Message\MessageFactory
+     * @var MessageFactory
      */
     protected $messageFactory;
 
     /**
      * Construct a Guzzle based HTTP adapter.
      *
-     * @param GuzzleHttp\Client $client
-     * @param GuzzleHttp\Message\MessageFactory $messageFactory
+     * @param Client $client
+     * @param MessageFactory $messageFactory
      */
     public function __construct(Client $client = null, MessageFactory $messageFactory = null)
     {
@@ -41,9 +40,9 @@ class GuzzleAdapter implements Adapter
     /**
      * Send the request and return the response.
      *
-     * @param  Symfony\Component\HttpFoundation\Request $symfonyRequest
-     * @param  string $url
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  Request $symfonyRequest
+     * @param  string  $url
+     * @return Response
      */
     public function send(Request $symfonyRequest, $url)
     {
@@ -58,8 +57,8 @@ class GuzzleAdapter implements Adapter
     /**
      * Convert the Symfony request to a Guzzle request.
      *
-     * @param  Symfony\Component\HttpFoundation\Request $request
-     * @return GuzzleHttp\Message\RequestInterface
+     * @param  Request $request
+     * @return RequestInterface
      */
     protected function convertRequest(Request $request)
     {
@@ -69,8 +68,8 @@ class GuzzleAdapter implements Adapter
     /**
      * Conver the Guzzle response to a Symfony response.
      *
-     * @param  GuzzleHttp\Message\ResponseInterface $response
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  ResponseInterface $response
+     * @return Response
      */
     protected function convertResponse(ResponseInterface $response)
     {

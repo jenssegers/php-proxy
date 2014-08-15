@@ -2,13 +2,13 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-class RewriteLocationFilter implements ResponseFilter {
+class RewriteLocationFilter implements ResponseFilterInterface {
 
     /**
      * Process the response.
      *
-     * @param  Symfony\Component\HttpFoundation\Response $request
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  Response $response
+     * @return Response
      */
     public function filter(Response $response)
     {

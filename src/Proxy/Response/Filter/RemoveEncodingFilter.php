@@ -2,7 +2,7 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-class RemoveEncodingFilter implements ResponseFilter
+class RemoveEncodingFilter implements ResponseFilterInterface
 {
     const TRANSFER_ENCODING = 'transfer-encoding';
 
@@ -11,8 +11,8 @@ class RemoveEncodingFilter implements ResponseFilter
     /**
      * Process the response.
      *
-     * @param  Symfony\Component\HttpFoundation\Response $request
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  Response $response
+     * @return Response
      */
     public function filter(Response $response)
     {

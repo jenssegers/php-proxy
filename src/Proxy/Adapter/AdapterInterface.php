@@ -1,15 +1,16 @@
 <?php namespace Proxy\Adapter;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-interface Adapter {
+interface AdapterInterface {
 
     /**
      * Send the request and return the response.
      *
-     * @param  Symfony\Component\HttpFoundation\Request $request
+     * @param  Request $request
      * @param  string  $url
-     * @return Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function send(Request $request, $url);
 
