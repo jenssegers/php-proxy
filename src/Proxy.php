@@ -1,8 +1,8 @@
 <?php namespace Proxy;
 
-use Proxy\Adapter\Adapter;
-use Proxy\Request\Filter\RequestFilter;
-use Proxy\Response\Filter\ResponseFilter;
+use Proxy\Adapter\AdapterInterface;
+use Proxy\Request\Filter\RequestFilterInterface;
+use Proxy\Response\Filter\ResponseFilterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,37 +11,37 @@ class Proxy {
     /**
      * The Request instance.
      *
-     * @var Symfony\Component\HttpFoundation\Request
+     * @var Request
      */
     protected $request;
 
     /**
      * The adapter instance.
      *
-     * @var Proxy\Adapter
+     * @var AdapterInterface
      */
     protected $adapter;
 
     /**
      * The registered request filters.
      *
-     * @var array
+     * @var RequestFilterInterface[]
      */
     protected $requestFilters = array();
 
     /**
      * The registered response filters.
      *
-     * @var array
+     * @var ResponseFilterInterface[]
      */
     protected $responseFilters = array();
 
     /**
      * Construct a Proxy instance.
      *
-     * @param Proxy\Adapter $adapter
+     * @param AdapterInterface $adapter
      */
-    public function __construct(Adapter $adapter)
+    public function __construct(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
     }
@@ -49,7 +49,7 @@ class Proxy {
     /**
      * Prepare the proxy to forward a request instance.
      *
-     * @param  Symfony\Component\HttpFoundation\Request $request
+     * @param  Request $request
      * @return $this
      */
     public function forward(Request $request)
@@ -63,7 +63,7 @@ class Proxy {
      * Forward the request to the target url and return the response.
      *
      * @param  string $target
-     * @return Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function to($target)
     {
@@ -94,9 +94,9 @@ class Proxy {
     /**
      * Register a request filter.
      *
-     * @param Proxy\Request\Filter\RequestFilter $filter
+     * @param RequestFilterInterface $filter
      */
-    public function addRequestFilter(RequestFilter $filter)
+    public function addRequestFilter(RequestFilterInterface $filter)
     {
         array_push($this->requestFilters, $filter);
     }
@@ -114,9 +114,9 @@ class Proxy {
     /**
      * Register a response filter.
      *
-     * @param Proxy\Request\Filter\ResponseFilter $filter
+     * @param ResponseFilterInterface $filter
      */
-    public function addResponseFilter(ResponseFilter $filter)
+    public function addResponseFilter(ResponseFilterInterface $filter)
     {
         array_push($this->responseFilters, $filter);
     }
@@ -124,12 +124,12 @@ class Proxy {
     /**
      * Apply request filters to the request instance.
      *
-     * @param  Symfony\Component\HttpFoundation\Request $request
-     * @return Symfony\Component\HttpFoundation\Request
+     * @param  Request $request
+     * @return Request
      */
     protected function applyRequestFilter(Request $request)
     {
-        $callback = function(RequestFilter $filter) use ($request)
+        $callback = function(RequestFilterInterface $filter) use ($request)
         {
             $filter->filter($request);
         };
@@ -142,12 +142,12 @@ class Proxy {
     /**
      * Apply response filters to the response instance.
      *
-     * @param  Symfony\Component\HttpFoundation\Response $response
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  Response $response
+     * @return Response
      */
     protected function applyResponseFilter(Response $response)
     {
-        $callback = function(ResponseFilter $filter) use ($response)
+        $callback = function(ResponseFilterInterface $filter) use ($response)
         {
             $filter->filter($response);
         };

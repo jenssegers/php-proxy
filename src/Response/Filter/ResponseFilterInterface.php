@@ -2,13 +2,13 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-interface ResponseFilter
+interface ResponseFilterInterface
 {
     /**
      * Process the response.
      *
-     * @param  Symfony\Component\HttpFoundation\Response $request
-     * @return Symfony\Component\HttpFoundation\Response
+     * @param  Response $request
+     * @return Response
      */
     public function filter(Response $response);
 }

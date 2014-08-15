@@ -2,7 +2,7 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-class RemoveEncodingFilter implements ResponseFilterInterface {
+class RemoveLocationFilter implements ResponseFilterInterface {
 
     /**
      * Process the response.
@@ -12,9 +12,12 @@ class RemoveEncodingFilter implements ResponseFilterInterface {
      */
     public function filter(Response $response)
     {
-        $response->headers->remove('transfer-encoding');
+        if ($response->headers->has('location'))
+        {
+            $response->headers->set('X-Proxy-Location', $response->headers->get('location'));
 
-        $response->headers->remove('content-encoding');
+            $response->headers->remove('location');
+        }
 
         return $response;
     }
