@@ -6,11 +6,11 @@ This is a HTTP/HTTPS proxy script that forwards requests to a different server a
 
 Add the package to your `composer.json` and run `composer update`.
 
-{
-    "require": {
-        "jenssegers/proxy": "2.*"
+    {
+        "require": {
+            "jenssegers/proxy": "2.*"
+        }
     }
-}
 
 ## Examples
 
