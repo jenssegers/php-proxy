@@ -11,14 +11,14 @@ class Proxy {
     /**
      * The Request instance.
      *
-     * @var Request
+     * @var Symfony\Component\HttpFoundation\Request
      */
     protected $request;
 
     /**
      * The adapter instance.
      *
-     * @var Adapter
+     * @var Proxy\Adapter
      */
     protected $adapter;
 
@@ -39,7 +39,7 @@ class Proxy {
     /**
      * Construct a Proxy instance.
      *
-     * @param Adapter $adapter
+     * @param Proxy\Adapter $adapter
      */
     public function __construct(Adapter $adapter)
     {
@@ -49,7 +49,7 @@ class Proxy {
     /**
      * Prepare the proxy to forward a request instance.
      *
-     * @param  Request $request
+     * @param  Symfony\Component\HttpFoundation\Request $request
      * @return $this
      */
     public function forward(Request $request)
@@ -63,7 +63,7 @@ class Proxy {
      * Forward the request to the target url and return the response.
      *
      * @param  string $target
-     * @return Response
+     * @return Symfony\Component\HttpFoundation\Response
      */
     public function to($target)
     {
@@ -94,7 +94,7 @@ class Proxy {
     /**
      * Register a request filter.
      *
-     * @param RequestFilter $filter
+     * @param Proxy\Request\Filter\RequestFilter $filter
      */
     public function addRequestFilter(RequestFilter $filter)
     {
@@ -114,7 +114,7 @@ class Proxy {
     /**
      * Register a response filter.
      *
-     * @param ResponseFilter $filter
+     * @param Proxy\Request\Filter\ResponseFilter $filter
      */
     public function addResponseFilter(ResponseFilter $filter)
     {
@@ -124,8 +124,8 @@ class Proxy {
     /**
      * Apply request filters to the request instance.
      *
-     * @param  Request $request
-     * @return Request
+     * @param  Symfony\Component\HttpFoundation\Request $request
+     * @return Symfony\Component\HttpFoundation\Request
      */
     protected function applyRequestFilter(Request $request)
     {
@@ -142,8 +142,8 @@ class Proxy {
     /**
      * Apply response filters to the response instance.
      *
-     * @param  Response $response
-     * @return Response
+     * @param  Symfony\Component\HttpFoundation\Response $response
+     * @return Symfony\Component\HttpFoundation\Response
      */
     protected function applyResponseFilter(Response $response)
     {
