@@ -1,7 +1,15 @@
 <?php
+use Proxy\Adapter\Guzzle\GuzzleFactory;
+use Proxy\Response\Filter\RemoveEncodingResponseFilter;
+use Symfony\Component\HttpFoundation\Request;
+
 require 'vendor/autoload.php';
 
-$response = Proxy::forward()->to('https://www.reddit.com');
+$proxy = GuzzleFactory::create();
+$proxy->addResponseFilter(new RemoveEncodingResponseFilter());
+
+$request = Request::createFromGlobals();
+$response = $proxy->forward($request)->to('http://www.example.com');
 
 // Output response to browser.
-$response->send();
+var_dump((string) $response);

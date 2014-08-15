@@ -2,3 +2,7 @@
 composer.lock
 .DS_Store
 index.php
+.idea/
+*.ipr
+*.iml
+*.iws

@@ -1,105 +1,134 @@
 <?php
+namespace Proxy;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Post\PostFile;
-use GuzzleHttp\Message\MessageFactory;
-use GuzzleHttp\Message\Response as GuzzleRequest;
-use GuzzleHttp\Message\Response as GuzzleResponse;
+use Proxy\Adapter\AdapterInterface;
+use Proxy\Exception\UnexpectedValueException;
+use Proxy\Request\Filter\RequestFilterInterface;
+use Proxy\Response\Filter\ResponseFilterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Proxy {
+class Proxy
+{
+    /**
+     * @var Request
+     */
+    private $symfonyRequest;
 
-    protected $request;
+    /**
+     * @var AdapterInterface
+     */
+    private $adapter;
 
-    protected $rewriteLocation = false;
+    /**
+     * @var RequestFilterInterface[]
+     */
+    private $requestFilter = [];
 
-    public static function forward($request = null)
+    /**
+     * @var ResponseFilterInterface[]
+     */
+    private $responseFilter = [];
+
+    /**
+     * @param AdapterInterface $adapter
+     */
+    public function __construct(AdapterInterface $adapter)
     {
-        $instance = new static;
-
-        if ( ! $request instanceof Request)
-        {
-            $path = $request;
-            $request = Request::createFromGlobals();
-
-            if (is_string($path))
-            {
-                $request->server->set('REQUEST_URI', '/' . ltrim($path, '/'));
-            }
-        }
-
-        $instance->request = $request;
-
-        return $instance;
+        $this->adapter = $adapter;
     }
 
-    public function to($url)
+    /**
+     * @param RequestFilterInterface[] $requestFilter
+     */
+    public function setRequestFilter(array $requestFilter)
     {
-        $request = $this->convertRequest($this->request);
-
-        $url = parse_url($url);
-
-        if (isset($url['host']))   $request->setHost($url['host']);
-        if (isset($url['port']))   $request->setPort($url['port']);
-        if (isset($url['scheme'])) $request->setScheme($url['scheme']);
-        if (isset($url['path']))   $request->setPath($url['path'] . $guzzleRequest->getPath());
-
-        $client = new Client;
-
-        $response = $client->send($request);
-
-        return $this->convertResponse($response);
+        $this->requestFilter = $requestFilter;
     }
 
-    public function convertRequest(Request $original)
+    /**
+     * @param RequestFilterInterface $filter
+     */
+    public function addRequestFilter(RequestFilterInterface $filter)
     {
-        $factory = new MessageFactory;
-
-        $request = $factory->fromMessage((string) $original);
-
-        $request->removeHeader('host');
-
-        if ($original->files->count())
-        {
-            $request->removeHeader('content-type');
-
-            foreach ($original->files->all() as $key => $file)
-            {
-                $request->getBody()->addFile(new PostFile($key, fopen($file->getRealPath(), 'r'), $file->getClientOriginalName()));
-            }
-        }
-
-        return $request;
+        array_push($this->requestFilter, $filter);
     }
 
-    protected function convertResponse(GuzzleResponse $response)
+    /**
+     * @param ResponseFilterInterface[] $responseFilter
+     */
+    public function setResponseFilter(array $responseFilter)
     {
-        $response->removeHeader('transfer-encoding');
-        $response->removeHeader('content-encoding');
-
-        if ($this->rewriteLocation and $response->hasHeader('location'))
-        {
-            $location = parse_url($response->getHeader('location'));
-
-            $url = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
-
-            if (isset($location['path']))  $url .= $location['path'];
-            if (isset($location['query'])) $url .= '?' . $location['query'];
-
-            $response->setHeader('location', $url);
-        }
-
-        $response = new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
-
-        return $response;
+        $this->responseFilter = $responseFilter;
     }
 
-    public function rewriteLocation($bool = true)
+    /**
+     * @param ResponseFilterInterface $filter
+     */
+    public function addResponseFilter(ResponseFilterInterface $filter)
     {
-        $this->rewriteLocation = $bool;
+        array_push($this->responseFilter, $filter);
+    }
+
+    /**
+     * @param Request $symfonyRequest
+     * @return Proxy
+     */
+    public function forward(Request $symfonyRequest)
+    {
+        $this->symfonyRequest = $symfonyRequest;
 
         return $this;
+    }
+
+    /**
+     * @param string $proxyUrl
+     * @throws Exception\UnexpectedValueException
+     * @return Response
+     */
+    public function to($proxyUrl)
+    {
+        if (is_null($this->symfonyRequest)) {
+            throw new UnexpectedValueException('Missing request.');
+        }
+
+        $this->applyRequestFilter($this->symfonyRequest);
+
+        $symfonyResponse = $this->adapter->send($this->symfonyRequest, $proxyUrl);
+
+        $this->applyResponseFilter($symfonyResponse);
+
+        return $symfonyResponse;
+    }
+
+    /**
+     * @param Request $symfonyRequest
+     * @return Request
+     */
+    private function applyRequestFilter(Request $symfonyRequest)
+    {
+        $applyFilter = function(RequestFilterInterface $filter) use ($symfonyRequest) {
+            $filter->filterRequest($symfonyRequest);
+        };
+
+        array_map($applyFilter, $this->requestFilter);
+
+        return $symfonyRequest;
+    }
+
+    /**
+     * @param Response $symfonyResponse
+     * @return Response
+     */
+    private function applyResponseFilter(Response $symfonyResponse)
+    {
+        $applyFilter = function(ResponseFilterInterface $filter) use ($symfonyResponse) {
+            $filter->filterResponse($symfonyResponse);
+        };
+
+        array_map($applyFilter, $this->responseFilter);
+
+        return $symfonyResponse;
     }
 
 }

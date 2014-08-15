@@ -1,9 +1,33 @@
 {
+    "name": "phpproxy/proxy",
+    "description": "Proxy library that forwards requests to the desired url and returns the response.",
+    "type": "library",
+    "keywords": ["proxy"],
+    "homepage": "https://github.com/jenssegers/php-proxy",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jens Segers",
+            "homepage": "http://jenssegers.be"
+        },
+        {
+            "name": "Ota Mares",
+            "email": "o.mares@rebuy.de",
+            "homepage": "http://www.rebuy.de"
+        }
+    ],
     "require": {
-        "symfony/http-foundation": "*",
-        "guzzlehttp/guzzle": "4.*"
+        "symfony/http-foundation": "~2.5.3"
+    },
+    "require-dev": {
+        "guzzlehttp/guzzle": "~4.1.7"
+    },
+    "suggest": {
+        "guzzlehttp/guzzle": "Required by the GuzzleAdapter."
     },
     "autoload": {
-        "classmap": ["src/Proxy.php"]
+        "psr-4": {
+            "Proxy\\": "src/"
+        }
     }
 }
