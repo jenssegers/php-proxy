@@ -2,8 +2,8 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-class RemoveEncodingFilter implements ResponseFilterInterface
-{
+class RemoveEncodingFilter implements ResponseFilterInterface {
+
     const TRANSFER_ENCODING = 'transfer-encoding';
 
     const CONTENT_ENCODING = 'content-encoding';
@@ -17,6 +17,7 @@ class RemoveEncodingFilter implements ResponseFilterInterface
     public function filter(Response $response)
     {
         $response->headers->remove(self::TRANSFER_ENCODING);
+
         $response->headers->remove(self::CONTENT_ENCODING);
 
         return $response;

@@ -1,16 +1,16 @@
-<?php
-namespace Proxy\Adapter\Dummy;
+<?php namespace Proxy\Adapter\Dummy;
 
 use Proxy\Adapter\AdapterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DummyAdapter implements AdapterInterface
-{
+class DummyAdapter implements AdapterInterface {
 
     /**
-     * @param Request $request
-     * @param string $url
+     * Send the request and return the response.
+     *
+     * @param  Request $request
+     * @param  string  $url
      * @return Response
      */
     public function send(Request $request, $url)

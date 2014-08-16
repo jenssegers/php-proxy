@@ -77,7 +77,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     public function to_sends_request()
     {
         $request = Request::createFromGlobals();
-        $url = 'http://www.rebuy.de';
+        $url = 'http://www.example.com';
 
         $adapter = $this->getMockBuilder('\Proxy\Adapter\Dummy\DummyAdapter')
             ->getMock();

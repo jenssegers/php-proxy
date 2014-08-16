@@ -1,5 +1,4 @@
-<?php
-namespace Proxy\Adapter\Guzzle;
+<?php namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\MessageFactory;
@@ -42,13 +41,14 @@ class GuzzleAdapter implements AdapterInterface {
     /**
      * Send the request and return the response.
      *
-     * @param  Request $symfonyRequest
+     * @param  Request $request
      * @param  string  $url
      * @return Response
      */
-    public function send(Request $symfonyRequest, $url)
+    public function send(Request $request, $url)
     {
-        $guzzleRequest = $this->convertRequest($symfonyRequest);
+        $guzzleRequest = $this->convertRequest($request);
+
         $guzzleRequest->setUrl($url);
 
         $guzzleResponse = $this->client->send($guzzleRequest);

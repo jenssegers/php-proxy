@@ -1,15 +1,15 @@
-<?php
-
-namespace Proxy\Response\Filter;
+<?php namespace Proxy\Response\Filter;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class RemoveLocationFilter implements ResponseFilterInterface
-{
+class RemoveLocationFilter implements ResponseFilterInterface {
+
     const LOCATION = 'location';
 
     /**
-     * @param Response $response
+     * Process the response.
+     *
+     * @param  Response $response
      * @return Response
      */
     public function filter(Response $response)

@@ -29,7 +29,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    private $body = 'Totally wesome response body';
+    private $body = 'Totally awesome response body';
 
     public function setUp()
     {
@@ -92,7 +92,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $verifyParam = $this->callback(function(\GuzzleHttp\Message\Request $request) {
-            return $request->getUrl() == 'http://www.rebuy.de';
+            return $request->getUrl() == 'http://www.example.com';
         });
 
         $clientMock->expects($this->once())
@@ -102,7 +102,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
 
         $adapter = new GuzzleAdapter($clientMock);
 
-        $adapter->send(Request::createFromGlobals(), 'http://www.rebuy.de');
+        $adapter->send(Request::createFromGlobals(), 'http://www.example.com');
     }
 
     /**

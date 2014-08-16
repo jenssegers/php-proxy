@@ -2,8 +2,8 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-interface ResponseFilterInterface
-{
+interface ResponseFilterInterface {
+
     /**
      * Process the response.
      *
@@ -11,4 +11,5 @@ interface ResponseFilterInterface
      * @return Response
      */
     public function filter(Response $response);
+
 }
