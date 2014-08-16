@@ -8,17 +8,19 @@ This is a HTTP/HTTPS proxy script that forwards requests to a different server a
 
 Add the package to your `composer.json` and run `composer update`.
 
-    {
-        "require": {
-            "jenssegers/proxy": "2.*"
-        }
+```php
+{
+    "require": {
+        "jenssegers/proxy": "2.*"
     }
+}
+```
 
 ## Examples
 
 The following example creates a request object, based on the current browser request, and forwards it to `example.com`. The `RemoveEncodingFilter` removes the encoding headers from the original response so that the current webserver can set these correctly.
 
-```
+```php
 use Proxy\Factory;
 use Proxy\Response\Filter\RemoveEncodingFilter;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +45,7 @@ $response->send();
 
 You can also proxy "custom" requests:
 
-```
+```php
 use Proxy\Factory;
 use Proxy\Response\Filter\RemoveEncodingFilter;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,7 +74,7 @@ $response->send();
 
 The following example uses a shortcut that is built into the factory:
 
-```
+```php
 use Proxy\Factory;
 use Proxy\Response\Filter\RemoveEncodingFilter;
 use Symfony\Component\HttpFoundation\Request;
