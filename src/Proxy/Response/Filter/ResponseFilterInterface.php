@@ -7,7 +7,7 @@ interface ResponseFilterInterface
     /**
      * Process the response.
      *
-     * @param  Response $request
+     * @param  Response $response
      * @return Response
      */
     public function filter(Response $response);

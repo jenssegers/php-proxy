@@ -1,6 +1,7 @@
 <?php namespace Proxy;
 
 use Proxy\Adapter\AdapterInterface;
+use Proxy\Exception\UnexpectedValueException;
 use Proxy\Request\Filter\RequestFilterInterface;
 use Proxy\Response\Filter\ResponseFilterInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,13 +64,14 @@ class Proxy {
      * Forward the request to the target url and return the response.
      *
      * @param  string $target
+     * @throws UnexpectedValueException
      * @return Response
      */
     public function to($target)
     {
         if (is_null($this->request))
         {
-            throw new \UnexpectedValueException('Missing request instance.');
+            throw new UnexpectedValueException('Missing request instance.');
         }
 
         $this->applyRequestFilter($this->request);
