@@ -88,7 +88,7 @@ class Proxy {
      *
      * @param array $filters
      */
-    public function setRequestFilter(array $filters)
+    public function setRequestFilters(array $filters)
     {
         $this->requestFilters = $filters;
     }
@@ -108,7 +108,7 @@ class Proxy {
      *
      * @param array $filters
      */
-    public function setResponseFilter(array $filters)
+    public function setResponseFilters(array $filters)
     {
         $this->responseFilters = $filters;
     }

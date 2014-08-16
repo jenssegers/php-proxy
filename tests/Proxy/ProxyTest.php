@@ -58,6 +58,38 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function to_applies_response_filters_from_set()
+    {
+        $filter = $this->getMockBuilder('\Proxy\Response\Filter\ResponseFilterInterface')
+            ->getMock();
+
+        $filter->expects($this->once())
+            ->method('filter');
+
+        $this->proxy->setResponseFilters([$filter]);
+
+        $this->proxy->forward(Request::createFromGlobals())->to('/');
+    }
+
+    /**
+     * @test
+     */
+    public function to_applies_request_filters_from_set()
+    {
+        $filter = $this->getMockBuilder('\Proxy\Request\Filter\RequestFilterInterface')
+            ->getMock();
+
+        $filter->expects($this->once())
+            ->method('filter');
+
+        $this->proxy->setRequestFilters([$filter]);
+
+        $this->proxy->forward(Request::createFromGlobals())->to('/');
+    }
+
+    /**
+     * @test
+     */
     public function to_applies_response_filters()
     {
         $filter = $this->getMockBuilder('\Proxy\Response\Filter\ResponseFilterInterface')
