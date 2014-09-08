@@ -69,7 +69,7 @@ class Factory {
      */
     protected static function createAdapter($adapter)
     {
-        $class = '\\Proxy\\Adapter\\' . ucfirst($adapter) . 'Adapter';
+        $class = '\\Proxy\\Adapter\\' . ucfirst($adapter) . '\\' . ucfirst($adapter) . 'Adapter';
 
         if (class_exists($class))
         {
