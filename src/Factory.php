@@ -37,7 +37,7 @@ class Factory {
      */
     public static function forward(Request $request)
     {
-        return self::create()->forward($request);
+        return static::create()->forward($request);
     }
 
     /**

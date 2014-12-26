@@ -86,3 +86,28 @@ $response = Factory::forward($request)->to('http://example.com');
 // Output response to the browser.
 $response->send();
 ```
+
+Or if you prefer not to use the factory:
+
+```php
+use Proxy\Proxy;
+use Proxy\Adapter\GuzzleAdapter;
+use Symfony\Component\HttpFoundation\Request;
+
+require 'vendor/autoload.php';
+
+// Create a Symfony request based on the current browser request.
+$request = Request::createFromGlobals();
+
+// Create a guzzle client
+$guzzle = new GuzzleHttp\Client;
+
+// Create the proxy instance
+$proxy = new Proxy(new GuzzleAdapter($guzzle));
+
+// Forward the request and get the response.
+$response = $proxy->forward($request)->to('http://example.com');
+
+// Output response to the browser.
+$response->send();
+```
