@@ -17,12 +17,12 @@
         }
     ],
     "require": {
-        "symfony/http-foundation": "~2.1",
+        "symfony/http-foundation": "~2.6",
         "guzzlehttp/guzzle": "~4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.2",
-        "satooshi/php-coveralls": "~0.6.1"
+        "phpunit/phpunit": "~4.4",
+        "satooshi/php-coveralls": "~0.6"
     },
     "autoload": {
         "psr-4": {
