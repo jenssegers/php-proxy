@@ -1,8 +1,7 @@
 <?php
 namespace Proxy\Proxy\Adapter\Guzzle;
 
-
-use GuzzleHttp\Adapter\MockAdapter;
+use GuzzleHttp\Subscriber\Mock;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
@@ -33,12 +32,11 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $response = $this->createResponse();
+        $mock = new Mock([$this->createResponse()]);
 
-        $mockAdapter = new MockAdapter();
-        $mockAdapter->setResponse($response);
+        $client = new Client;
+        $client->getEmitter()->attach($mock);
 
-        $client = new Client(['adapter' => $mockAdapter]);
         $this->adapter = new GuzzleAdapter($client);
     }
 
