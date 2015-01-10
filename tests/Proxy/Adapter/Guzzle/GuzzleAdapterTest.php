@@ -1,10 +1,10 @@
 <?php
 namespace Proxy\Proxy\Adapter\Guzzle;
 
-use GuzzleHttp\Subscriber\Mock;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
+use GuzzleHttp\Ring\Client\MockHandler;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,10 +32,15 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $mock = new Mock([$this->createResponse()]);
+        $response = $this->createResponse();
 
-        $client = new Client;
-        $client->getEmitter()->attach($mock);
+        $mock = new MockHandler([
+            'status' => $response->getStatusCode(),
+            'headers' => $response->getHeaders(),
+            'body' => $response->getBody(),
+        ]);
+
+        $client = new Client(['handler' => $mock]);
 
         $this->adapter = new GuzzleAdapter($client);
     }
@@ -109,7 +114,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     private function sendRequest()
     {
         $request = Request::createFromGlobals();
-        return $this->adapter->send($request, '/');
+        return $this->adapter->send($request, 'http://www.example.com');
     }
 
     /**
@@ -120,6 +125,5 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
         $body = Stream::factory($this->body);
         return new Response($this->status, $this->headers, $body);
     }
-
 
 }
