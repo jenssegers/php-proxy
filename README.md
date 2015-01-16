@@ -91,7 +91,7 @@ Or if you prefer not to use the factory:
 
 ```php
 use Proxy\Proxy;
-use Proxy\Adapter\GuzzleAdapter;
+use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Symfony\Component\HttpFoundation\Request;
 
 require 'vendor/autoload.php';
