@@ -142,19 +142,17 @@ class Proxy {
      */
     protected function applyRequestFilter(Request $request)
     {
-        $callback = function($filter) use ($request)
+        foreach ($this->requestFilters as $filter)
         {
             if ($filter instanceof RequestFilterInterface)
             {
-                return $filter->filter($request);
+                $request = $filter->filter($request) ?: $request;
             }
             else if ($filter instanceof Closure)
             {
-                return $filter($request);
+                $request = $filter($request) ?: $request;
             }
-        };
-
-        array_map($callback, $this->requestFilters);
+        }
 
         return $request;
     }
@@ -167,19 +165,17 @@ class Proxy {
      */
     protected function applyResponseFilter(Response $response)
     {
-        $callback = function($filter) use ($response)
+        foreach ($this->responseFilters as $filter)
         {
             if ($filter instanceof ResponseFilterInterface)
             {
-                return $filter->filter($response);
+                $response = $filter->filter($response) ?: $response;
             }
             else if ($filter instanceof Closure)
             {
-                return $filter($response);
+                $response = $filter($response) ?: $response;
             }
-        };
-
-        array_map($callback, $this->responseFilters);
+        }
 
         return $response;
     }

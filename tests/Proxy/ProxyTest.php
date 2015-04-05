@@ -159,4 +159,21 @@ class ProxyTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($executed);
     }
 
+    /**
+     * @test
+     */
+    public function to_request_filter_returns_new_request()
+    {
+        $replace = new Request;
+
+        $this->proxy->addRequestFilter(function(Request $request) use ($replace)
+        {
+            return $replace;
+        });
+
+        $this->proxy->forward(Request::createFromGlobals())->to('/');
+
+        $this->assertEquals($this->proxy->getRequest(), $replace);
+    }
+
 }
