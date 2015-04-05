@@ -1,5 +1,6 @@
 <?php namespace Proxy;
 
+use Closure;
 use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\UnexpectedValueException;
 use Proxy\Request\Filter\RequestFilterInterface;
@@ -74,13 +75,23 @@ class Proxy {
             throw new UnexpectedValueException('Missing request instance.');
         }
 
-        $this->applyRequestFilter($this->request);
+        $this->request = $this->applyRequestFilter($this->request);
 
         $response = $this->adapter->send($this->request, $target);
 
-        $this->applyResponseFilter($response);
+        $response = $this->applyResponseFilter($response);
 
         return $response;
+    }
+
+    /**
+     * Get the request instance.
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 
     /**
@@ -96,9 +107,9 @@ class Proxy {
     /**
      * Register a request filter.
      *
-     * @param RequestFilterInterface $filter
+     * @param mixed $filter
      */
-    public function addRequestFilter(RequestFilterInterface $filter)
+    public function addRequestFilter($filter)
     {
         array_push($this->requestFilters, $filter);
     }
@@ -116,9 +127,9 @@ class Proxy {
     /**
      * Register a response filter.
      *
-     * @param ResponseFilterInterface $filter
+     * @param mixed $filter
      */
-    public function addResponseFilter(ResponseFilterInterface $filter)
+    public function addResponseFilter($filter)
     {
         array_push($this->responseFilters, $filter);
     }
@@ -131,9 +142,16 @@ class Proxy {
      */
     protected function applyRequestFilter(Request $request)
     {
-        $callback = function(RequestFilterInterface $filter) use ($request)
+        $callback = function($filter) use ($request)
         {
-            $filter->filter($request);
+            if ($filter instanceof RequestFilterInterface)
+            {
+                return $filter->filter($request);
+            }
+            else if ($filter instanceof Closure)
+            {
+                return $filter($request);
+            }
         };
 
         array_map($callback, $this->requestFilters);
@@ -149,9 +167,16 @@ class Proxy {
      */
     protected function applyResponseFilter(Response $response)
     {
-        $callback = function(ResponseFilterInterface $filter) use ($response)
+        $callback = function($filter) use ($response)
         {
-            $filter->filter($response);
+            if ($filter instanceof ResponseFilterInterface)
+            {
+                return $filter->filter($response);
+            }
+            else if ($filter instanceof Closure)
+            {
+                return $filter($response);
+            }
         };
 
         array_map($callback, $this->responseFilters);

@@ -64,7 +64,7 @@ class GuzzleAdapter implements AdapterInterface {
      */
     protected function convertRequest(Request $request)
     {
-        return $this->messageFactory->fromMessage((string)$request);
+        return $this->messageFactory->fromMessage((string) $request);
     }
 
     /**

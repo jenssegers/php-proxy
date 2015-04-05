@@ -121,7 +121,42 @@ class ProxyTest extends PHPUnit_Framework_TestCase
 
         $proxy = new Proxy($adapter);
         $proxy->forward($request)->to($url);
+    }
 
+    /**
+     * @test
+     */
+    public function to_applies_request_filter_closure()
+    {
+        $executed = false;
+
+        $this->proxy->addRequestFilter(function(Request $request) use (&$executed)
+        {
+            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $request);
+            $executed = true;
+        });
+
+        $this->proxy->forward(Request::createFromGlobals())->to('/');
+
+        $this->assertTrue($executed);
+    }
+
+    /**
+     * @test
+     */
+    public function to_applies_response_filter_closure()
+    {
+        $executed = false;
+
+        $this->proxy->addResponseFilter(function(Response $response) use (&$executed)
+        {
+            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+            $executed = true;
+        });
+
+        $this->proxy->forward(Request::createFromGlobals())->to('/');
+
+        $this->assertTrue($executed);
     }
 
 }
