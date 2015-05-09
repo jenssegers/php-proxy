@@ -1,7 +1,6 @@
 <?php
 namespace Proxy\Response\Filter;
 
-
 use Symfony\Component\HttpFoundation\Response;
 
 class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase

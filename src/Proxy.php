@@ -148,7 +148,7 @@ class Proxy {
             {
                 $request = $filter->filter($request) ?: $request;
             }
-            else if ($filter instanceof Closure)
+            elseif ($filter instanceof Closure)
             {
                 $request = $filter($request) ?: $request;
             }
@@ -171,7 +171,7 @@ class Proxy {
             {
                 $response = $filter->filter($response) ?: $response;
             }
-            else if ($filter instanceof Closure)
+            elseif ($filter instanceof Closure)
             {
                 $response = $filter($response) ?: $response;
             }

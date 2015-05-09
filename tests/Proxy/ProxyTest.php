@@ -28,7 +28,6 @@ class ProxyTest extends PHPUnit_Framework_TestCase
         $this->proxy->to('/');
     }
 
-
     /**
      * @test
      */
@@ -130,7 +129,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     {
         $executed = false;
 
-        $this->proxy->addRequestFilter(function(Request $request) use (&$executed)
+        $this->proxy->addRequestFilter(function (Request $request) use (&$executed)
         {
             $this->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $request);
             $executed = true;
@@ -148,7 +147,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     {
         $executed = false;
 
-        $this->proxy->addResponseFilter(function(Response $response) use (&$executed)
+        $this->proxy->addResponseFilter(function (Response $response) use (&$executed)
         {
             $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
             $executed = true;
@@ -166,7 +165,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     {
         $replace = new Request;
 
-        $this->proxy->addRequestFilter(function(Request $request) use ($replace)
+        $this->proxy->addRequestFilter(function (Request $request) use ($replace)
         {
             return $replace;
         });

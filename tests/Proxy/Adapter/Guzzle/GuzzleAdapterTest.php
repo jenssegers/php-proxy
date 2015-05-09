@@ -35,9 +35,9 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
         $response = $this->createResponse();
 
         $mock = new MockHandler([
-            'status' => $response->getStatusCode(),
+            'status'  => $response->getStatusCode(),
             'headers' => $response->getHeaders(),
-            'body' => $response->getBody(),
+            'body'    => $response->getBody(),
         ]);
 
         $client = new Client(['handler' => $mock]);
@@ -94,7 +94,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $verifyParam = $this->callback(function(\GuzzleHttp\Message\Request $request) {
+        $verifyParam = $this->callback(function (\GuzzleHttp\Message\Request $request) {
             return $request->getUrl() == 'http://www.example.com';
         });
 
@@ -114,6 +114,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     private function sendRequest()
     {
         $request = Request::createFromGlobals();
+
         return $this->adapter->send($request, 'http://www.example.com');
     }
 
@@ -123,6 +124,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     private function createResponse()
     {
         $body = Stream::factory($this->body);
+
         return new Response($this->status, $this->headers, $body);
     }
 

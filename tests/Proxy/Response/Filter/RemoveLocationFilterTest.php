@@ -1,8 +1,6 @@
 <?php
 namespace Proxy\Response\Filter;
 
-
-use Proxy\Response\Filter\RemoveLocationFilter;
 use Symfony\Component\HttpFoundation\Response;
 
 class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase

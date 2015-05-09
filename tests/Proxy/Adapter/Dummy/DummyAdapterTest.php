@@ -1,7 +1,6 @@
 <?php
 namespace Proxy\Adapter\Dummy;
 
-
 use Symfony\Component\HttpFoundation\Request;
 
 class DummyAdapterTest extends \PHPUnit_Framework_TestCase

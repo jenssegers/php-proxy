@@ -33,9 +33,9 @@ class GuzzleAdapter implements AdapterInterface {
      */
     public function __construct(Client $client = null, MessageFactoryInterface $messageFactory = null)
     {
-        $this->client = $client ? : new Client;
+        $this->client = $client ?: new Client;
 
-        $this->messageFactory = $messageFactory ? : new MessageFactory;
+        $this->messageFactory = $messageFactory ?: new MessageFactory;
     }
 
     /**
