@@ -30,7 +30,7 @@ class DummyAdapterTest extends \PHPUnit_Framework_TestCase
      */
     public function response_contains_target_url_as_xheader()
     {
-        $url = 'http://www.rebuy.de';
+        $url = 'http://www.example.com';
 
         $response = $this->adapter->send(Request::createFromGlobals(), $url);
 

@@ -2,9 +2,8 @@
 namespace Proxy\Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Message\Response;
-use GuzzleHttp\Stream\Stream;
-use GuzzleHttp\Ring\Client\MockHandler;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Handler\MockHandler;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,12 +31,8 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $response = $this->createResponse();
-
         $mock = new MockHandler([
-            'status'  => $response->getStatusCode(),
-            'headers' => $response->getHeaders(),
-            'body'    => $response->getBody(),
+            $this->createResponse(),
         ]);
 
         $client = new Client(['handler' => $mock]);
@@ -94,8 +89,8 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $verifyParam = $this->callback(function (\GuzzleHttp\Message\Request $request) {
-            return $request->getUrl() == 'http://www.example.com';
+        $verifyParam = $this->callback(function (\GuzzleHttp\Psr7\Request $request) {
+            return $request->getUri() == 'http://www.example.com';
         });
 
         $clientMock->expects($this->once())
@@ -123,9 +118,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
      */
     private function createResponse()
     {
-        $body = Stream::factory($this->body);
-
-        return new Response($this->status, $this->headers, $body);
+        return new Response($this->status, $this->headers, $this->body);
     }
 
 }

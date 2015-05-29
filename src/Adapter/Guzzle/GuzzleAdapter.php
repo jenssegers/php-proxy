@@ -1,11 +1,11 @@
 <?php namespace Proxy\Adapter\Guzzle;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Message\MessageFactory;
-use GuzzleHttp\Message\MessageFactoryInterface;
-use GuzzleHttp\Message\RequestInterface;
-use GuzzleHttp\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Proxy\Adapter\AdapterInterface;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,23 +19,13 @@ class GuzzleAdapter implements AdapterInterface {
     protected $client;
 
     /**
-     * The Guzzle message factory instance.
-     *
-     * @var MessageFactory
-     */
-    protected $messageFactory;
-
-    /**
      * Construct a Guzzle based HTTP adapter.
      *
      * @param Client $client
-     * @param \GuzzleHttp\Message\MessageFactoryInterface $messageFactory
      */
-    public function __construct(Client $client = null, MessageFactoryInterface $messageFactory = null)
+    public function __construct(Client $client = null)
     {
         $this->client = $client ?: new Client;
-
-        $this->messageFactory = $messageFactory ?: new MessageFactory;
     }
 
     /**
@@ -47,9 +37,7 @@ class GuzzleAdapter implements AdapterInterface {
      */
     public function send(Request $request, $url)
     {
-        $guzzleRequest = $this->convertRequest($request);
-
-        $guzzleRequest->setUrl($url);
+        $guzzleRequest = $this->convertRequest($request)->withUri(new Uri($url));
 
         $guzzleResponse = $this->client->send($guzzleRequest);
 
@@ -64,7 +52,12 @@ class GuzzleAdapter implements AdapterInterface {
      */
     protected function convertRequest(Request $request)
     {
-        return $this->messageFactory->fromMessage((string) $request);
+        return new GuzzleRequest(
+            $request->getMethod(),
+            $request->getRequestUri(),
+            $request->headers->all(),
+            $request->getContent()
+        );
     }
 
     /**
