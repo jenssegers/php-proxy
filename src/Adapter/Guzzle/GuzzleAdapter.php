@@ -5,9 +5,10 @@ use Psr\Http\Message\ResponseInterface;
 use Proxy\Adapter\AdapterInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Uri;
-use GuzzleHttp\Psr7\Request as GuzzleRequest;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 
 class GuzzleAdapter implements AdapterInterface {
 
@@ -31,13 +32,13 @@ class GuzzleAdapter implements AdapterInterface {
     /**
      * Send the request and return the response.
      *
-     * @param  Request $request
-     * @param  string  $url
-     * @return Response
+     * @param  SymfonyRequest $request
+     * @param  string  $to
+     * @return SymfonyResponse
      */
-    public function send(Request $request, $url)
+    public function send(SymfonyRequest $request, $to)
     {
-        $guzzleRequest = $this->convertRequest($request)->withUri(new Uri($url));
+        $guzzleRequest = $this->convertRequest($request)->withUri(new Uri($to));
 
         $guzzleResponse = $this->client->send($guzzleRequest);
 
@@ -47,27 +48,22 @@ class GuzzleAdapter implements AdapterInterface {
     /**
      * Convert the Symfony request to a Guzzle request.
      *
-     * @param  Request $request
+     * @param  SymfonyRequest $request
      * @return RequestInterface
      */
-    protected function convertRequest(Request $request)
+    protected function convertRequest(SymfonyRequest $request)
     {
-        return new GuzzleRequest(
-            $request->getMethod(),
-            $request->getRequestUri(),
-            $request->headers->all(),
-            $request->getContent()
-        );
+        return (new DiactorosFactory())->createRequest($request);
     }
 
     /**
      * Conver the Guzzle response to a Symfony response.
      *
      * @param  ResponseInterface $response
-     * @return Response
+     * @return SymfonyResponse
      */
     protected function convertResponse(ResponseInterface $response)
     {
-        return new Response($response->getBody(), $response->getStatusCode(), $response->getHeaders());
+        return (new HttpFoundationFactory())->createResponse($response);
     }
 }

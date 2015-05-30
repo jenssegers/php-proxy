@@ -18,7 +18,9 @@
     ],
     "require": {
         "symfony/http-foundation": "~2.5",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "symfony/psr-http-message-bridge": "^0.1.0",
+        "zendframework/zend-diactoros": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.4",

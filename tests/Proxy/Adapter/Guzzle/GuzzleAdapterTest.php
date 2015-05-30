@@ -89,7 +89,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $verifyParam = $this->callback(function (\GuzzleHttp\Psr7\Request $request) {
+        $verifyParam = $this->callback(function (\Psr\Http\Message\RequestInterface $request) {
             return $request->getUri() == 'http://www.example.com';
         });
 
@@ -100,7 +100,9 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
 
         $adapter = new GuzzleAdapter($clientMock);
 
-        $adapter->send(Request::createFromGlobals(), 'http://www.example.com');
+        $request = Request::create('http://localhost', 'GET');
+
+        $adapter->send($request, 'http://www.example.com');
     }
 
     /**
@@ -108,7 +110,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
      */
     private function sendRequest()
     {
-        $request = Request::createFromGlobals();
+        $request = Request::create('http://localhost', 'GET');
 
         return $this->adapter->send($request, 'http://www.example.com');
     }
