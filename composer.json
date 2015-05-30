@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "symfony/http-foundation": "~2.5",
+        "symfony/http-foundation": "~2.5|~3.0",
         "guzzlehttp/guzzle": "~6.0",
         "symfony/psr-http-message-bridge": "^0.1.0",
         "zendframework/zend-diactoros": "^1.0"
@@ -31,5 +31,6 @@
         "psr-4": {
             "Proxy\\": "src"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
