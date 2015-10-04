@@ -19,9 +19,8 @@ The following example creates a request object, based on the current browser req
 ```php
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
+use Proxy\Response\Filter\RemoveEncodingFilter;
 use Zend\Diactoros\ServerRequestFactory;
-
-require 'vendor/autoload.php';
 
 // Create a PSR7 request based on the current browser request.
 $request = ServerRequestFactory::fromGlobals();
@@ -31,6 +30,9 @@ $guzzle = new GuzzleHttp\Client();
 
 // Create the proxy instance
 $proxy = new Proxy(new GuzzleAdapter($guzzle));
+
+// Add a response filter that removes the encoding headers.
+$proxy->addResponseFilter(new RemoveEncodingFilter());
 
 // Forward the request and get the response.
 $response = $proxy->forward($request)->to('http://example.com');
