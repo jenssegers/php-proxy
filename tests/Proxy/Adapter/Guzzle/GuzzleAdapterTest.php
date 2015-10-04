@@ -4,7 +4,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
-use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
