@@ -1,15 +1,15 @@
 <?php namespace Proxy\Request\Filter;
 
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\RequestInterface;
 
 interface RequestFilterInterface {
 
     /**
      * Process the request.
      *
-     * @param  Request $request
-     * @return Request
+     * @param  RequestInterface $request
+     * @return RequestInterface
      */
-    public function filter(Request $request);
+    public function filter(RequestInterface $request);
 
 }

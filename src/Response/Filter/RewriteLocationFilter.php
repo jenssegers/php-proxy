@@ -1,20 +1,22 @@
 <?php namespace Proxy\Response\Filter;
 
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class RewriteLocationFilter implements ResponseFilterInterface {
+
+    const LOCATION = 'location';
 
     /**
      * Process the response.
      *
-     * @param  Response $response
-     * @return Response
+     * @param  ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function filter(Response $response)
+    public function filter(ResponseInterface $response)
     {
-        if ($response->headers->has('location'))
+        if ($response->hasHeader(self::LOCATION))
         {
-            $original = parse_url($response->headers->get('location'));
+            $original = parse_url($response->getHeader(self::LOCATION));
 
             $target = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
 
@@ -22,9 +24,9 @@ class RewriteLocationFilter implements ResponseFilterInterface {
 
             if (isset($original['query'])) $target .= '?' . $original['query'];
 
-            $response->headers->set('X-Proxy-Location', $response->headers->get('location'));
-
-            $response->headers->set('location', $target);
+            $response = $response
+                ->withHeader('X-Proxy-Location', $response->getHeader(self::LOCATION))
+                ->withHeader(self::LOCATION, $target);
         }
 
         return $response;

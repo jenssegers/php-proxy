@@ -1,14 +1,10 @@
 <?php namespace Proxy\Adapter\Guzzle;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Proxy\Adapter\AdapterInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Uri;
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
-use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Proxy\Adapter\AdapterInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class GuzzleAdapter implements AdapterInterface {
 
@@ -32,38 +28,14 @@ class GuzzleAdapter implements AdapterInterface {
     /**
      * Send the request and return the response.
      *
-     * @param  SymfonyRequest $request
+     * @param  RequestInterface $request
      * @param  string  $to
-     * @return SymfonyResponse
+     * @return ResponseInterface
      */
-    public function send(SymfonyRequest $request, $to)
+    public function send(RequestInterface $request, $to)
     {
-        $guzzleRequest = $this->convertRequest($request)->withUri(new Uri($to));
+        $request = $request->withUri(new Uri($to));
 
-        $guzzleResponse = $this->client->send($guzzleRequest);
-
-        return $this->convertResponse($guzzleResponse);
-    }
-
-    /**
-     * Convert the Symfony request to a Guzzle request.
-     *
-     * @param  SymfonyRequest $request
-     * @return RequestInterface
-     */
-    protected function convertRequest(SymfonyRequest $request)
-    {
-        return (new DiactorosFactory())->createRequest($request);
-    }
-
-    /**
-     * Conver the Guzzle response to a Symfony response.
-     *
-     * @param  ResponseInterface $response
-     * @return SymfonyResponse
-     */
-    protected function convertResponse(ResponseInterface $response)
-    {
-        return (new HttpFoundationFactory())->createResponse($response);
+        return $this->client->send($request);
     }
 }

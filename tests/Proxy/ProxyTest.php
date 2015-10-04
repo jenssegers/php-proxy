@@ -1,13 +1,14 @@
-<?php
-namespace Proxy;
+<?php namespace Proxy;
 
-use PHPUnit_Framework_TestCase;
-use Proxy\Exception\UnexpectedValueException;
 use Proxy\Adapter\Dummy\DummyAdapter;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Proxy\Exception\UnexpectedValueException;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Request;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
 
-class ProxyTest extends PHPUnit_Framework_TestCase
+class ProxyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Proxy
@@ -31,11 +32,11 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function to_returns_symfony_response()
+    public function to_returns_psr_response()
     {
-        $response = $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $response = $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
 
-        $this->assertTrue($response instanceof Response);
+        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
     }
 
     /**
@@ -43,7 +44,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_applies_request_filters()
     {
-        $filter = $this->getMockBuilder('\Proxy\Request\Filter\RequestFilterInterface')
+        $filter = $this->getMockBuilder('Proxy\Request\Filter\RequestFilterInterface')
             ->getMock();
 
         $filter->expects($this->once())
@@ -51,7 +52,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
 
         $this->proxy->addRequestFilter($filter);
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
     }
 
     /**
@@ -59,7 +60,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_applies_response_filters_from_set()
     {
-        $filter = $this->getMockBuilder('\Proxy\Response\Filter\ResponseFilterInterface')
+        $filter = $this->getMockBuilder('Proxy\Response\Filter\ResponseFilterInterface')
             ->getMock();
 
         $filter->expects($this->once())
@@ -67,7 +68,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
 
         $this->proxy->setResponseFilters([$filter]);
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
     }
 
     /**
@@ -75,7 +76,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_applies_request_filters_from_set()
     {
-        $filter = $this->getMockBuilder('\Proxy\Request\Filter\RequestFilterInterface')
+        $filter = $this->getMockBuilder('Proxy\Request\Filter\RequestFilterInterface')
             ->getMock();
 
         $filter->expects($this->once())
@@ -83,7 +84,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
 
         $this->proxy->setRequestFilters([$filter]);
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
     }
 
     /**
@@ -91,7 +92,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_applies_response_filters()
     {
-        $filter = $this->getMockBuilder('\Proxy\Response\Filter\ResponseFilterInterface')
+        $filter = $this->getMockBuilder('Proxy\Response\Filter\ResponseFilterInterface')
             ->getMock();
 
         $filter->expects($this->once())
@@ -99,7 +100,7 @@ class ProxyTest extends PHPUnit_Framework_TestCase
 
         $this->proxy->addResponseFilter($filter);
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
     }
 
     /**
@@ -107,16 +108,16 @@ class ProxyTest extends PHPUnit_Framework_TestCase
      */
     public function to_sends_request()
     {
-        $request = Request::createFromGlobals();
+        $request = ServerRequestFactory::fromGlobals();
         $url = 'http://www.example.com';
 
-        $adapter = $this->getMockBuilder('\Proxy\Adapter\Dummy\DummyAdapter')
+        $adapter = $this->getMockBuilder('Proxy\Adapter\Dummy\DummyAdapter')
             ->getMock();
 
         $adapter->expects($this->once())
             ->method('send')
             ->with($request, $url)
-            ->willReturn(Response::create());
+            ->willReturn(new Response);
 
         $proxy = new Proxy($adapter);
         $proxy->forward($request)->to($url);
@@ -129,13 +130,13 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     {
         $executed = false;
 
-        $this->proxy->addRequestFilter(function (Request $request) use (&$executed)
+        $this->proxy->addRequestFilter(function (RequestInterface $request) use (&$executed)
         {
-            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Request', $request);
+            $this->assertInstanceOf('Psr\Http\Message\RequestInterface', $request);
             $executed = true;
         });
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
 
         $this->assertTrue($executed);
     }
@@ -147,13 +148,13 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     {
         $executed = false;
 
-        $this->proxy->addResponseFilter(function (Response $response) use (&$executed)
+        $this->proxy->addResponseFilter(function (ResponseInterface $response) use (&$executed)
         {
-            $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+            $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
             $executed = true;
         });
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
 
         $this->assertTrue($executed);
     }
@@ -165,12 +166,12 @@ class ProxyTest extends PHPUnit_Framework_TestCase
     {
         $replace = new Request;
 
-        $this->proxy->addRequestFilter(function (Request $request) use ($replace)
+        $this->proxy->addRequestFilter(function (RequestInterface $request) use ($replace)
         {
             return $replace;
         });
 
-        $this->proxy->forward(Request::createFromGlobals())->to('/');
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->to('/');
 
         $this->assertEquals($this->proxy->getRequest(), $replace);
     }

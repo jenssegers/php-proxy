@@ -1,6 +1,6 @@
 <?php namespace Proxy\Response\Filter;
 
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class RemoveEncodingFilter implements ResponseFilterInterface {
 
@@ -11,16 +11,14 @@ class RemoveEncodingFilter implements ResponseFilterInterface {
     /**
      * Process the response.
      *
-     * @param  Response $response
-     * @return Response
+     * @param  ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function filter(Response $response)
+    public function filter(ResponseInterface $response)
     {
-        $response->headers->remove(self::TRANSFER_ENCODING);
-
-        $response->headers->remove(self::CONTENT_ENCODING);
-
-        return $response;
+        return $response
+            ->withoutHeader(self::TRANSFER_ENCODING)
+            ->withoutHeader(self::CONTENT_ENCODING);
     }
 
 }

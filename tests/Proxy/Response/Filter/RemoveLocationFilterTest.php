@@ -1,7 +1,6 @@
-<?php
-namespace Proxy\Response\Filter;
+<?php namespace Proxy\Response\Filter;
 
-use Symfony\Component\HttpFoundation\Response;
+use Zend\Diactoros\Response;
 
 class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,11 +19,11 @@ class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase
      */
     public function filter_removes_location()
     {
-        $response = Response::create('', 200, [RemoveLocationFilter::LOCATION => '/']);
+        $response = new Response('php://memory', 200, [RemoveLocationFilter::LOCATION => '/']);
 
-        $this->filter->filter($response);
+        $response = $this->filter->filter($response);
 
-        $this->assertFalse($response->headers->has(RemoveLocationFilter::LOCATION));
+        $this->assertFalse($response->hasHeader(RemoveLocationFilter::LOCATION));
     }
 
     /**
@@ -32,11 +31,12 @@ class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase
      */
     public function filter_adds_location_as_xheader()
     {
-        $url = 'http://www.rebuy.de/';
-        $response = Response::create('', 200, [RemoveLocationFilter::LOCATION => $url]);
+        $url = 'http://www.example.com';
 
-        $this->filter->filter($response);
+        $response = new Response('php://memory', 200, [RemoveLocationFilter::LOCATION => $url]);
 
-        $this->assertEquals($url, $response->headers->get('X-Proxy-Location'));
+        $response = $this->filter->filter($response);
+
+        $this->assertEquals($url, $response->getHeader('X-Proxy-Location')[0]);
     }
 }

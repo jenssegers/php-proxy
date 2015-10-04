@@ -2,8 +2,8 @@
 
 use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Factory {
 
@@ -32,10 +32,10 @@ class Factory {
     /**
      * Forward a request using the default adapter.
      *
-     * @param  Request $request
-     * @return Response
+     * @param  RequestInterface $request
+     * @return ResponseInterface
      */
-    public static function forward(Request $request)
+    public static function forward(RequestInterface $request)
     {
         return static::create()->forward($request);
     }

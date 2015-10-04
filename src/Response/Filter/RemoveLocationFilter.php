@@ -1,6 +1,6 @@
 <?php namespace Proxy\Response\Filter;
 
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class RemoveLocationFilter implements ResponseFilterInterface {
 
@@ -9,16 +9,16 @@ class RemoveLocationFilter implements ResponseFilterInterface {
     /**
      * Process the response.
      *
-     * @param  Response $response
-     * @return Response
+     * @param  ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function filter(Response $response)
+    public function filter(ResponseInterface $response)
     {
-        if ($response->headers->has(self::LOCATION))
+        if ($response->hasHeader(self::LOCATION))
         {
-            $response->headers->set('X-Proxy-Location', $response->headers->get(self::LOCATION));
-
-            $response->headers->remove(self::LOCATION);
+            $response = $response
+                ->withHeader('X-Proxy-Location', $response->getHeader(self::LOCATION))
+                ->withoutHeader(self::LOCATION);
         }
 
         return $response;

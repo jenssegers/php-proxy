@@ -5,15 +5,15 @@ use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\UnexpectedValueException;
 use Proxy\Request\Filter\RequestFilterInterface;
 use Proxy\Response\Filter\ResponseFilterInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Proxy {
 
     /**
      * The Request instance.
      *
-     * @var Request
+     * @var RequestInterface
      */
     protected $request;
 
@@ -29,14 +29,14 @@ class Proxy {
      *
      * @var RequestFilterInterface[]
      */
-    protected $requestFilters = array();
+    protected $requestFilters = [];
 
     /**
      * The registered response filters.
      *
      * @var ResponseFilterInterface[]
      */
-    protected $responseFilters = array();
+    protected $responseFilters = [];
 
     /**
      * Construct a Proxy instance.
@@ -51,10 +51,10 @@ class Proxy {
     /**
      * Prepare the proxy to forward a request instance.
      *
-     * @param  Request $request
+     * @param  RequestInterface $request
      * @return $this
      */
-    public function forward(Request $request)
+    public function forward(RequestInterface $request)
     {
         $this->request = $request;
 
@@ -87,7 +87,7 @@ class Proxy {
     /**
      * Get the request instance.
      *
-     * @return Request
+     * @return RequestInterface
      */
     public function getRequest()
     {
@@ -137,10 +137,10 @@ class Proxy {
     /**
      * Apply request filters to the request instance.
      *
-     * @param  Request $request
-     * @return Request
+     * @param  RequestInterface $request
+     * @return RequestInterface
      */
-    protected function applyRequestFilter(Request $request)
+    protected function applyRequestFilter(RequestInterface $request)
     {
         foreach ($this->requestFilters as $filter)
         {
@@ -160,10 +160,10 @@ class Proxy {
     /**
      * Apply response filters to the response instance.
      *
-     * @param  Response $response
-     * @return Response
+     * @param  ResponseInterface $response
+     * @return ResponseInterface
      */
-    protected function applyResponseFilter(Response $response)
+    protected function applyResponseFilter(ResponseInterface $response)
     {
         foreach ($this->responseFilters as $filter)
         {

@@ -1,15 +1,15 @@
 <?php namespace Proxy\Response\Filter;
 
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
 
 interface ResponseFilterInterface {
 
     /**
      * Process the response.
      *
-     * @param  Response $response
-     * @return Response
+     * @param  ResponseInterface $response
+     * @return ResponseInterface
      */
-    public function filter(Response $response);
+    public function filter(ResponseInterface $response);
 
 }

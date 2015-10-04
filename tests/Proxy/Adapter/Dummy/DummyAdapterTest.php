@@ -1,7 +1,8 @@
-<?php
-namespace Proxy\Adapter\Dummy;
+<?php namespace Proxy\Adapter\Dummy;
 
-use Symfony\Component\HttpFoundation\Request;
+use Zend\Diactoros\Request;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Stream;
 
 class DummyAdapterTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,11 +19,11 @@ class DummyAdapterTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function adapter_returns_symfony_response()
+    public function adapter_returns_psr_response()
     {
-        $response = $this->adapter->send(Request::createFromGlobals(), '/');
+        $response = $this->adapter->send(ServerRequestFactory::fromGlobals(), '/');
 
-        $this->assertTrue($response instanceof \Symfony\Component\HttpFoundation\Response);
+        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
     }
 
     /**
@@ -32,21 +33,8 @@ class DummyAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $url = 'http://www.example.com';
 
-        $response = $this->adapter->send(Request::createFromGlobals(), $url);
+        $response = $this->adapter->send(ServerRequestFactory::fromGlobals(), $url);
 
-        $this->assertEquals($url, $response->headers->get("X-Url"));
-    }
-
-    /**
-     * @test
-     */
-    public function response_contains_body()
-    {
-        $content = 'Some awesome content that is passed through.';
-        $request = Request::create('/', 'POST', [], [], [], [], $content);
-
-        $response = $this->adapter->send($request, '/');
-
-        $this->assertEquals($content, $response->getContent());
+        $this->assertEquals($url, $response->getHeader('X-Url')[0]);
     }
 }
