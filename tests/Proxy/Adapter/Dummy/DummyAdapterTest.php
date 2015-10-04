@@ -1,8 +1,6 @@
 <?php namespace Proxy\Adapter\Dummy;
 
-use Zend\Diactoros\Request;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Stream;
 
 class DummyAdapterTest extends \PHPUnit_Framework_TestCase
 {
