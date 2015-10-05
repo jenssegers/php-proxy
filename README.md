@@ -50,9 +50,9 @@ $response = $proxy
 	->forward($request)
 	->filter(function ($request, $response, $next) {
 		// Manipulate the request object.
-		$request = $request->withHeader('User-Agent', 'Special proxy agent');
+		$request = $request->withHeader('User-Agent', 'FishBot/1.0');
 
-		// Call the item in the middleware.
+		// Call the next item in the middleware.
 		$response = $next($request, $response);
 
 		// Manipulate the response object.
