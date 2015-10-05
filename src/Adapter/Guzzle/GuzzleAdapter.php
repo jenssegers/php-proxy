@@ -1,7 +1,6 @@
 <?php namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Uri;
 use Proxy\Adapter\AdapterInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
