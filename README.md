@@ -48,7 +48,7 @@ You can apply filters to the requests and responses using the middleware strateg
 ```php
 $response = $proxy
 	->forward($request)
-	->filter(function ($response, $request, $next) {
+	->filter(function ($request, $response, $next) {
 		// Manipulate the request object.
 		$request = $request->withHeader('User-Agent', 'Special proxy agent');
 
