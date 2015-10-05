@@ -32,7 +32,7 @@ $guzzle = new GuzzleHttp\Client();
 $proxy = new Proxy(new GuzzleAdapter($guzzle));
 
 // Add a response filter that removes the encoding headers.
-$proxy->filter(new RemoveLocationFilter());
+$proxy->filter(new RemoveEncodingFilter());
 
 // Forward the request and get the response.
 $response = $proxy->forward($request)->to('http://example.com');
