@@ -1,19 +1,19 @@
-<?php namespace Proxy\Response\Filter;
+<?php namespace Proxy\Filter;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class RemoveLocationFilter implements ResponseFilterInterface {
+class RemoveLocationFilter implements FilterInterface {
 
     const LOCATION = 'location';
 
     /**
-     * Process the response.
-     *
-     * @param  ResponseInterface $response
-     * @return ResponseInterface
+     * @inheritdoc
      */
-    public function filter(ResponseInterface $response)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $response = $next($request, $response);
+
         if ($response->hasHeader(self::LOCATION))
         {
             $response = $response
@@ -23,4 +23,5 @@ class RemoveLocationFilter implements ResponseFilterInterface {
 
         return $response;
     }
+
 }

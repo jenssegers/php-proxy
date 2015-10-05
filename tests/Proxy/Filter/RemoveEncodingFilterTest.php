@@ -1,5 +1,6 @@
-<?php namespace Proxy\Response\Filter;
+<?php namespace Proxy\Filter;
 
+use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
 class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase
@@ -19,9 +20,11 @@ class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase
      */
     public function filter_removes_transfer_encoding()
     {
+        $request = new Request;
         $response = new Response('php://memory', 200, [RemoveEncodingFilter::TRANSFER_ENCODING => 'foo']);
+        $next = function() use ($response) { return $response; };
 
-        $response = $this->filter->filter($response);
+        $response = call_user_func($this->filter, $request, $response, $next);
 
         $this->assertFalse($response->hasHeader(RemoveEncodingFilter::TRANSFER_ENCODING));
     }
@@ -31,9 +34,11 @@ class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase
      */
     public function filter_removes_content_encoding()
     {
-        $response = new Response('php://memory', 200, [RemoveEncodingFilter::CONTENT_ENCODING => 'foo']);
+        $request = new Request;
+        $response = new Response('php://memory', 200, [RemoveEncodingFilter::TRANSFER_ENCODING => 'foo']);
+        $next = function($request, $response) { return $response; };
 
-        $response = $this->filter->filter($response);
+        $response = call_user_func($this->filter, $request, $response, $next);
 
         $this->assertFalse($response->hasHeader(RemoveEncodingFilter::CONTENT_ENCODING));
     }

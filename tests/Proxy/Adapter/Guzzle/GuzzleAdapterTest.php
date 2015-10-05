@@ -85,24 +85,20 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
      */
     public function adapter_sends_request()
     {
+        $request = new Request('http://localhost', 'GET');
+
         $clientMock = $this->getMockBuilder('GuzzleHttp\Client')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $verifyParam = $this->callback(function (Request $request, $options = []) {
-            return $request->getUri() == 'http://www.example.com';
-        });
-
         $clientMock->expects($this->once())
             ->method('send')
-            ->with($verifyParam)
+            ->with($request)
             ->willReturn($this->createResponse());
 
         $adapter = new GuzzleAdapter($clientMock);
 
-        $request = new Request('http://localhost', 'GET');
-
-        $adapter->send($request, 'http://www.example.com');
+        $adapter->send($request);
     }
 
     /**
@@ -112,7 +108,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request('http://localhost', 'GET');
 
-        return $this->adapter->send($request, 'http://www.example.com');
+        return $this->adapter->send($request);
     }
 
     /**

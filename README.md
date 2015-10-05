@@ -12,7 +12,7 @@ Install using composer:
 composer require jenssegers/proxy
 ```
 
-## Examples
+## Example
 
 The following example creates a request object, based on the current browser request, and forwards it to `example.com`. The `RemoveEncodingFilter` removes the encoding headers from the original response so that the current webserver can set these correctly.
 
@@ -39,4 +39,26 @@ $response = $proxy->forward($request)->to('http://example.com');
 
 // Output response to the browser.
 (new Zend\Diactoros\Response\SapiEmitter)->emit($response);
+```
+
+## Filters
+
+You can apply filters to the requests and responses using the middleware strategy:
+
+```php
+$response = $proxy
+	->forward($request)
+	->filter(function ($response, $request, $next) {
+		// Manipulate the request object.
+		$request = $request->withHeader('User-Agent', 'Special proxy agent');
+
+		// Call the item in the middleware.
+		$response = $next($request, $response);
+
+		// Manipulate the response object.
+		$response = $response->withHeader('X-Proxy-Foo', 'Bar');
+
+		return $response;
+	})
+	->to('http://example.com');
 ```

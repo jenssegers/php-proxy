@@ -7,6 +7,8 @@ use Proxy\Request\Filter\RequestFilterInterface;
 use Proxy\Response\Filter\ResponseFilterInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Relay\RelayBuilder;
+use Zend\Diactoros\Response;
 
 class Proxy {
 
@@ -25,18 +27,11 @@ class Proxy {
     protected $adapter;
 
     /**
-     * The registered request filters.
+     * Middleware filters.
      *
-     * @var RequestFilterInterface[]
+     * @var callable[]
      */
-    protected $requestFilters = [];
-
-    /**
-     * The registered response filters.
-     *
-     * @var ResponseFilterInterface[]
-     */
-    protected $responseFilters = [];
+    protected $filters = [];
 
     /**
      * Construct a Proxy instance.
@@ -75,13 +70,37 @@ class Proxy {
             throw new UnexpectedValueException('Missing request instance.');
         }
 
-        $this->request = $this->applyRequestFilter($this->request);
+        $uri = $this->request->getUri()
+            ->withScheme(parse_url($target, PHP_URL_SCHEME))
+            ->withHost(parse_url($target, PHP_URL_HOST));
 
-        $response = $this->adapter->send($this->request, $target);
+        $request = $this->request->withUri($uri);
 
-        $response = $this->applyResponseFilter($response);
+        $stack = $this->filters;
 
-        return $response;
+        $stack[] = function(RequestInterface $request, ResponseInterface $response, callable $next) use ($target)
+        {
+            $response = $this->adapter->send($request, $target);
+
+            return $next($request, $response);
+        };
+
+        $relay = (new RelayBuilder)->newInstance($stack);
+
+        return $relay($request, new Response);
+    }
+
+    /**
+     * Add filter middleware.
+     *
+     * @param  callable $callable
+     * @return $this
+     */
+    public function filter(callable $callable)
+    {
+        $this->filters[] = $callable;
+
+        return $this;
     }
 
     /**
@@ -92,92 +111,6 @@ class Proxy {
     public function getRequest()
     {
         return $this->request;
-    }
-
-    /**
-     * Overwrite the request filters array.
-     *
-     * @param array $filters
-     */
-    public function setRequestFilters(array $filters)
-    {
-        $this->requestFilters = $filters;
-    }
-
-    /**
-     * Register a request filter.
-     *
-     * @param mixed $filter
-     */
-    public function addRequestFilter($filter)
-    {
-        array_push($this->requestFilters, $filter);
-    }
-
-    /**
-     * Overwrite the response filters array.
-     *
-     * @param array $filters
-     */
-    public function setResponseFilters(array $filters)
-    {
-        $this->responseFilters = $filters;
-    }
-
-    /**
-     * Register a response filter.
-     *
-     * @param mixed $filter
-     */
-    public function addResponseFilter($filter)
-    {
-        array_push($this->responseFilters, $filter);
-    }
-
-    /**
-     * Apply request filters to the request instance.
-     *
-     * @param  RequestInterface $request
-     * @return RequestInterface
-     */
-    protected function applyRequestFilter(RequestInterface $request)
-    {
-        foreach ($this->requestFilters as $filter)
-        {
-            if ($filter instanceof RequestFilterInterface)
-            {
-                $request = $filter->filter($request) ?: $request;
-            }
-            elseif ($filter instanceof Closure)
-            {
-                $request = $filter($request) ?: $request;
-            }
-        }
-
-        return $request;
-    }
-
-    /**
-     * Apply response filters to the response instance.
-     *
-     * @param  ResponseInterface $response
-     * @return ResponseInterface
-     */
-    protected function applyResponseFilter(ResponseInterface $response)
-    {
-        foreach ($this->responseFilters as $filter)
-        {
-            if ($filter instanceof ResponseFilterInterface)
-            {
-                $response = $filter->filter($response) ?: $response;
-            }
-            elseif ($filter instanceof Closure)
-            {
-                $response = $filter($response) ?: $response;
-            }
-        }
-
-        return $response;
     }
 
 }

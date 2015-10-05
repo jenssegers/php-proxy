@@ -1,19 +1,19 @@
-<?php namespace Proxy\Response\Filter;
+<?php namespace Proxy\Filter;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class RewriteLocationFilter implements ResponseFilterInterface {
+class RewriteLocationFilter implements FilterInterface {
 
     const LOCATION = 'location';
 
     /**
-     * Process the response.
-     *
-     * @param  ResponseInterface $response
-     * @return ResponseInterface
+     * @inheritdoc
      */
-    public function filter(ResponseInterface $response)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $response = $next($request, $response);
+
         if ($response->hasHeader(self::LOCATION))
         {
             $original = parse_url($response->getHeader(self::LOCATION));

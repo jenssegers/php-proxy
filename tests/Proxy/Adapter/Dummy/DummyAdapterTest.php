@@ -23,16 +23,4 @@ class DummyAdapterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
     }
-
-    /**
-     * @test
-     */
-    public function response_contains_target_url_as_xheader()
-    {
-        $url = 'http://www.example.com';
-
-        $response = $this->adapter->send(ServerRequestFactory::fromGlobals(), $url);
-
-        $this->assertEquals($url, $response->getHeader('X-Url')[0]);
-    }
 }

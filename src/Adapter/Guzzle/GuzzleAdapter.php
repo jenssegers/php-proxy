@@ -29,13 +29,10 @@ class GuzzleAdapter implements AdapterInterface {
      * Send the request and return the response.
      *
      * @param  RequestInterface $request
-     * @param  string  $to
      * @return ResponseInterface
      */
-    public function send(RequestInterface $request, $to)
+    public function send(RequestInterface $request)
     {
-        $request = $request->withUri(new Uri($to));
-
         return $this->client->send($request);
     }
 }
