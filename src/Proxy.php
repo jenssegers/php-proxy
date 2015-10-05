@@ -1,10 +1,7 @@
 <?php namespace Proxy;
 
-use Closure;
 use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\UnexpectedValueException;
-use Proxy\Request\Filter\RequestFilterInterface;
-use Proxy\Response\Filter\ResponseFilterInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Relay\RelayBuilder;
@@ -78,7 +75,7 @@ class Proxy {
 
         $stack = $this->filters;
 
-        $stack[] = function(RequestInterface $request, ResponseInterface $response, callable $next) use ($target)
+        $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) use ($target)
         {
             $response = $this->adapter->send($request, $target);
 

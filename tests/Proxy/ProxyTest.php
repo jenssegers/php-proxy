@@ -3,7 +3,6 @@
 use Proxy\Adapter\Dummy\DummyAdapter;
 use Proxy\Exception\UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -46,7 +45,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
     {
         $applied = false;
 
-        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function($request, $response) use (&$applied) {
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $response) use (&$applied) {
             $applied = true;
         })->to('http://www.example.com');
 
