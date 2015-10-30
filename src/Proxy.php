@@ -67,9 +67,20 @@ class Proxy {
             throw new UnexpectedValueException('Missing request instance.');
         }
 
+        // Overwrite target scheme and host.
         $uri = $this->request->getUri()
             ->withScheme(parse_url($target, PHP_URL_SCHEME))
             ->withHost(parse_url($target, PHP_URL_HOST));
+
+        // Check for custom port.
+        if ($port = parse_url($target, PHP_URL_PORT)) {
+            $uri = $uri->withPort($port);
+        }
+
+        // Check for subdirectory.
+        if ($path = parse_url($target, PHP_URL_PATH)) {
+            $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
+        }
 
         $request = $this->request->withUri($uri);
 

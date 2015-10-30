@@ -76,4 +76,52 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $proxy->forward($request)->to($url);
     }
 
+    /**
+     * @test
+     */
+    public function to_sends_request_with_port()
+    {
+        $request = new Request('http://localhost/path?query=yes', 'GET');
+        $url = 'https://www.example.com:3000';
+
+        $adapter = $this->getMockBuilder('Proxy\Adapter\Dummy\DummyAdapter')
+            ->getMock();
+
+        $verifyParam = $this->callback(function (RequestInterface $request) use ($url) {
+            return $request->getUri() == 'https://www.example.com:3000/path?query=yes';
+        });
+
+        $adapter->expects($this->once())
+            ->method('send')
+            ->with($verifyParam)
+            ->willReturn(new Response);
+
+        $proxy = new Proxy($adapter);
+        $proxy->forward($request)->to($url);
+    }
+
+    /**
+     * @test
+     */
+    public function to_sends_request_with_subdirectory()
+    {
+        $request = new Request('http://localhost/path?query=yes', 'GET');
+        $url = 'https://www.example.com/proxy/';
+
+        $adapter = $this->getMockBuilder('Proxy\Adapter\Dummy\DummyAdapter')
+            ->getMock();
+
+        $verifyParam = $this->callback(function (RequestInterface $request) use ($url) {
+            return $request->getUri() == 'https://www.example.com/proxy/path?query=yes';
+        });
+
+        $adapter->expects($this->once())
+            ->method('send')
+            ->with($verifyParam)
+            ->willReturn(new Response);
+
+        $proxy = new Proxy($adapter);
+        $proxy->forward($request)->to($url);
+    }
+
 }
