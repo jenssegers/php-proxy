@@ -89,9 +89,9 @@ class Proxy {
 
         $stack = $this->filters;
 
-        $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) use ($target)
+        $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next)
         {
-            $response = $this->adapter->send($request, $target);
+            $response = $this->adapter->send($request);
 
             return $next($request, $response);
         };
