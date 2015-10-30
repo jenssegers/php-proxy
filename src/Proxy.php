@@ -6,6 +6,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Relay\RelayBuilder;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Uri;
 
 class Proxy {
 
@@ -67,18 +68,20 @@ class Proxy {
             throw new UnexpectedValueException('Missing request instance.');
         }
 
+        $target = new Uri($target);
+
         // Overwrite target scheme and host.
         $uri = $this->request->getUri()
-            ->withScheme(parse_url($target, PHP_URL_SCHEME))
-            ->withHost(parse_url($target, PHP_URL_HOST));
+            ->withScheme($target->getScheme())
+            ->withHost($target->getHost());
 
         // Check for custom port.
-        if ($port = parse_url($target, PHP_URL_PORT)) {
+        if ($port = $target->getPort()) {
             $uri = $uri->withPort($port);
         }
 
         // Check for subdirectory.
-        if ($path = parse_url($target, PHP_URL_PATH)) {
+        if ($path = $target->getPath()) {
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
 
