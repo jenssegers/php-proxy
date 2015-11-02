@@ -1,7 +1,6 @@
 {
     "name": "jenssegers/proxy",
     "description": "Proxy library that forwards requests to the desired url and returns the response.",
-    "type": "library",
     "keywords": ["proxy"],
     "homepage": "https://github.com/jenssegers/php-proxy",
     "license": "MIT",
