@@ -76,9 +76,20 @@ class Proxy {
             ->withHost($target->getHost());
 
         // Check for custom port.
-        if ($port = $target->getPort()) {
-            $uri = $uri->withPort($port);
+        $port = $target->getPort();
+
+        if ($port === null) {
+            switch ($target->getScheme()) {
+                case 'http':
+                    $port = 80;
+                    break;
+                case 'https':
+                    $port = 443;
+                    break;
+            }
         }
+
+        $uri = $uri->withPort($port);
 
         // Check for subdirectory.
         if ($path = $target->getPath()) {
