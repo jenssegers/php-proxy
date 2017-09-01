@@ -12,6 +12,8 @@ matrix:
 
 sudo: false
 
+dist: trusty
+
 before_script:
   - composer self-update
   - travis_retry composer install --no-interaction --prefer-source
