@@ -19,11 +19,11 @@ The following example creates a request object, based on the current browser req
 ```php
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
-use Proxy\Filter\RemoveEncodingFilter;
-use Zend\Diactoros\ServerRequestFactory;
+use Proxy\Response\Filter\RemoveEncodingFilter;
+use Symfony\Component\HttpFoundation\Request;
 
 // Create a PSR7 request based on the current browser request.
-$request = ServerRequestFactory::fromGlobals();
+$request = Request::createFromGlobals();
 
 // Create a guzzle client
 $guzzle = new GuzzleHttp\Client();
@@ -32,13 +32,12 @@ $guzzle = new GuzzleHttp\Client();
 $proxy = new Proxy(new GuzzleAdapter($guzzle));
 
 // Add a response filter that removes the encoding headers.
-$proxy->filter(new RemoveEncodingFilter());
+$proxy->addResponseFilter(new RemoveEncodingFilter());
 
 // Forward the request and get the response.
 $response = $proxy->forward($request)->to('http://example.com');
 
-// Output response to the browser.
-(new Zend\Diactoros\Response\SapiEmitter)->emit($response);
+$response->send();
 ```
 
 ## Filters
