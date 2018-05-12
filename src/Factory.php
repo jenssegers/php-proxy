@@ -1,12 +1,12 @@
-<?php namespace Proxy;
+<?php
+
+namespace Proxy;
 
 use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\InvalidArgumentException;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
-class Factory {
-
+class Factory
+{
     /**
      * The default adapter name.
      *
@@ -27,17 +27,6 @@ class Factory {
         $instance = static::createAdapter($adapter);
 
         return new Proxy($instance);
-    }
-
-    /**
-     * Forward a request using the default adapter.
-     *
-     * @param  RequestInterface $request
-     * @return ResponseInterface
-     */
-    public static function forward(RequestInterface $request)
-    {
-        return static::create()->forward($request);
     }
 
     /**
@@ -71,12 +60,10 @@ class Factory {
     {
         $class = '\\Proxy\\Adapter\\' . ucfirst($adapter) . '\\' . ucfirst($adapter) . 'Adapter';
 
-        if (class_exists($class))
-        {
+        if (class_exists($class)) {
             return new $class;
         }
 
         throw new InvalidArgumentException("Adapter [$adapter] not found.");
     }
-
 }

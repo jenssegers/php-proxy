@@ -1,13 +1,16 @@
-<?php namespace Proxy\Proxy\Adapter\Guzzle;
+<?php
+
+namespace Proxy\Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use PHPUnit\Framework\TestCase;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 
-class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
+class GuzzleAdapterTest extends TestCase
 {
     /**
      * @var GuzzleAdapter
@@ -47,7 +50,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $response = $this->sendRequest();
 
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 
     /**
@@ -87,7 +90,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request('http://localhost', 'GET');
 
-        $clientMock = $this->getMockBuilder('GuzzleHttp\Client')
+        $clientMock = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -102,7 +105,7 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Response
+     * @return ResponseInterface
      */
     private function sendRequest()
     {
@@ -112,11 +115,10 @@ class GuzzleAdapterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Response
+     * @return ResponseInterface
      */
     private function createResponse()
     {
         return new GuzzleResponse($this->status, $this->headers, $this->body);
     }
-
 }

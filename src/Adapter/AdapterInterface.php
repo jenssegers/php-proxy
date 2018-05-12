@@ -1,10 +1,12 @@
-<?php namespace Proxy\Adapter;
+<?php
+
+namespace Proxy\Adapter;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-interface AdapterInterface {
-
+interface AdapterInterface
+{
     /**
      * Send the request and return the response.
      *
@@ -12,5 +14,4 @@ interface AdapterInterface {
      * @return ResponseInterface
      */
     public function send(RequestInterface $request);
-
 }

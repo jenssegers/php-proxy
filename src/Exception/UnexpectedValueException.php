@@ -1,3 +1,7 @@
-<?php namespace Proxy\Exception;
+<?php
 
-class UnexpectedValueException extends \UnexpectedValueException {}
+namespace Proxy\Exception;
+
+class UnexpectedValueException extends \UnexpectedValueException
+{
+}

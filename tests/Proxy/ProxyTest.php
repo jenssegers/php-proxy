@@ -1,5 +1,8 @@
-<?php namespace Proxy;
+<?php
 
+namespace Proxy;
+
+use PHPUnit\Framework\TestCase;
 use Proxy\Adapter\Dummy\DummyAdapter;
 use Proxy\Exception\UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
@@ -7,7 +10,7 @@ use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
-class ProxyTest extends \PHPUnit_Framework_TestCase
+class ProxyTest extends TestCase
 {
     /**
      * @var Proxy
@@ -45,7 +48,8 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
     {
         $applied = false;
 
-        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $response) use (&$applied) {
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $response) use (&$applied
+        ) {
             $applied = true;
         })->to('http://www.example.com');
 
@@ -60,7 +64,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $request = new Request('http://localhost/path?query=yes', 'GET');
         $url = 'https://www.example.com';
 
-        $adapter = $this->getMockBuilder('Proxy\Adapter\Dummy\DummyAdapter')
+        $adapter = $this->getMockBuilder(DummyAdapter::class)
             ->getMock();
 
         $verifyParam = $this->callback(function (RequestInterface $request) use ($url) {
@@ -84,7 +88,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $request = new Request('http://localhost/path?query=yes', 'GET');
         $url = 'https://www.example.com:3000';
 
-        $adapter = $this->getMockBuilder('Proxy\Adapter\Dummy\DummyAdapter')
+        $adapter = $this->getMockBuilder(DummyAdapter::class)
             ->getMock();
 
         $verifyParam = $this->callback(function (RequestInterface $request) use ($url) {
@@ -108,7 +112,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $request = new Request('http://localhost/path?query=yes', 'GET');
         $url = 'https://www.example.com/proxy/';
 
-        $adapter = $this->getMockBuilder('Proxy\Adapter\Dummy\DummyAdapter')
+        $adapter = $this->getMockBuilder(DummyAdapter::class)
             ->getMock();
 
         $verifyParam = $this->callback(function (RequestInterface $request) use ($url) {
@@ -123,5 +127,4 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
         $proxy = new Proxy($adapter);
         $proxy->forward($request)->to($url);
     }
-
 }

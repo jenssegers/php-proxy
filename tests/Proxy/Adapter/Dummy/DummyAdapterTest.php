@@ -1,8 +1,12 @@
-<?php namespace Proxy\Adapter\Dummy;
+<?php
 
+namespace Proxy\Adapter\Dummy;
+
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequestFactory;
+use PHPUnit\Framework\TestCase;
 
-class DummyAdapterTest extends \PHPUnit_Framework_TestCase
+class DummyAdapterTest extends TestCase
 {
     /**
      * @var DummyAdapter
@@ -21,6 +25,6 @@ class DummyAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $response = $this->adapter->send(ServerRequestFactory::fromGlobals(), '/');
 
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 }

@@ -1,9 +1,12 @@
-<?php namespace Proxy\Filter;
+<?php
 
+namespace Proxy\Filter;
+
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
-class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase
+class RemoveLocationFilterTest extends TestCase
 {
     /**
      * @var RemoveLocationFilter
@@ -22,7 +25,9 @@ class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request;
         $response = new Response('php://memory', 200, [RemoveLocationFilter::LOCATION => 'http://www.example.com']);
-        $next = function () use ($response) { return $response; };
+        $next = function () use ($response) {
+            return $response;
+        };
 
         $response = call_user_func($this->filter, $request, $response, $next);
 
@@ -36,7 +41,9 @@ class RemoveLocationFilterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request;
         $response = new Response('php://memory', 200, [RemoveLocationFilter::LOCATION => 'http://www.example.com']);
-        $next = function () use ($response) { return $response; };
+        $next = function () use ($response) {
+            return $response;
+        };
 
         $response = call_user_func($this->filter, $request, $response, $next);
 
