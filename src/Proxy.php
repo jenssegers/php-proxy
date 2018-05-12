@@ -13,29 +13,21 @@ use Zend\Diactoros\Uri;
 class Proxy
 {
     /**
-     * The Request instance.
-     *
      * @var RequestInterface
      */
     protected $request;
 
     /**
-     * The adapter instance.
-     *
      * @var AdapterInterface
      */
     protected $adapter;
 
     /**
-     * Middleware filters.
-     *
      * @var callable[]
      */
     protected $filters = [];
 
     /**
-     * Construct a Proxy instance.
-     *
      * @param AdapterInterface $adapter
      */
     public function __construct(AdapterInterface $adapter)
@@ -102,7 +94,7 @@ class Proxy
     }
 
     /**
-     * Add filter middleware.
+     * Add a filter middleware.
      *
      * @param  callable $callable
      * @return $this
@@ -115,8 +107,6 @@ class Proxy
     }
 
     /**
-     * Get the request instance.
-     *
      * @return RequestInterface
      */
     public function getRequest()
