@@ -8,11 +8,15 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="true"
-         syntaxCheck="false"
 >
     <testsuites>
         <testsuite name="PHPProxy Test Suite">
             <directory>tests/Proxy/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
