@@ -63,15 +63,11 @@ class Proxy
 
         $target = new Uri($target);
 
-        // Overwrite target scheme and host.
+        // Overwrite target scheme, host and port.
         $uri = $this->request->getUri()
             ->withScheme($target->getScheme())
-            ->withHost($target->getHost());
-
-        // Check for custom port.
-        if ($port = $target->getPort()) {
-            $uri = $uri->withPort($port);
-        }
+            ->withHost($target->getHost())
+            ->withPort($target->getPort());
 
         // Check for subdirectory.
         if ($path = $target->getPath()) {
