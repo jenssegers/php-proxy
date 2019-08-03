@@ -17,7 +17,8 @@ class RewriteLocationFilter implements FilterInterface
         $response = $next($request, $response);
 
         if ($response->hasHeader(self::LOCATION)) {
-            $original = parse_url($response->getHeader(self::LOCATION));
+            $location = $response->getHeader(self::LOCATION)[0];
+            $original = parse_url($location);
 
             $target = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
 
@@ -30,10 +31,9 @@ class RewriteLocationFilter implements FilterInterface
             }
 
             $response = $response
-                ->withHeader('X-Proxy-Location', $response->getHeader(self::LOCATION))
+                ->withHeader('X-Proxy-Location', $location)
                 ->withHeader(self::LOCATION, $target);
         }
-
         return $response;
     }
 }
