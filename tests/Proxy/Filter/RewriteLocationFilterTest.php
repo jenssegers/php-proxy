@@ -1,9 +1,10 @@
 <?php namespace Proxy\Filter;
 
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
-class RewriteLocationFilterTest extends \PHPUnit_Framework_TestCase
+class RewriteLocationFilterTest extends TestCase
 {
     /**
      * @var RewriteLocationFilter
@@ -22,9 +23,12 @@ class RewriteLocationFilterTest extends \PHPUnit_Framework_TestCase
     {
         $_SERVER['SCRIPT_NAME'] = "";
         $redirect_url = 'http://www.example.com/path?arg1=123&arg2=456';
-        $request = new Request;
+
+        $request = new Request();
         $response = new Response('php://memory', 200, [RewriteLocationFilter::LOCATION => $redirect_url]);
-        $next = function () use ($response) { return $response; };
+        $next = function () use ($response) {
+            return $response;
+        };
 
         $response = call_user_func($this->filter, $request, $response, $next);
 
@@ -32,5 +36,4 @@ class RewriteLocationFilterTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($response->hasHeader(RewriteLocationFilter::LOCATION));
         $this->assertEquals('/path?arg1=123&arg2=456', $response->getHeaderLine(RewriteLocationFilter::LOCATION));
     }
-
 }
