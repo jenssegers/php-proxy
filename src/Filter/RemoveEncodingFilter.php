@@ -1,12 +1,13 @@
-<?php namespace Proxy\Filter;
+<?php
+
+namespace Proxy\Filter;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class RemoveEncodingFilter implements FilterInterface {
-
+class RemoveEncodingFilter implements FilterInterface
+{
     const TRANSFER_ENCODING = 'transfer-encoding';
-
     const CONTENT_ENCODING = 'content-encoding';
 
     /**
@@ -20,5 +21,4 @@ class RemoveEncodingFilter implements FilterInterface {
             ->withoutHeader(self::TRANSFER_ENCODING)
             ->withoutHeader(self::CONTENT_ENCODING);
     }
-
 }

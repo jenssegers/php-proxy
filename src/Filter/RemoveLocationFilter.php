@@ -1,10 +1,12 @@
-<?php namespace Proxy\Filter;
+<?php
+
+namespace Proxy\Filter;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class RemoveLocationFilter implements FilterInterface {
-
+class RemoveLocationFilter implements FilterInterface
+{
     const LOCATION = 'location';
 
     /**
@@ -14,8 +16,7 @@ class RemoveLocationFilter implements FilterInterface {
     {
         $response = $next($request, $response);
 
-        if ($response->hasHeader(self::LOCATION))
-        {
+        if ($response->hasHeader(self::LOCATION)) {
             $response = $response
                 ->withHeader('X-Proxy-Location', $response->getHeader(self::LOCATION))
                 ->withoutHeader(self::LOCATION);
@@ -23,5 +24,4 @@ class RemoveLocationFilter implements FilterInterface {
 
         return $response;
     }
-
 }

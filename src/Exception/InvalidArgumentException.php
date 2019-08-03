@@ -1,3 +1,7 @@
-<?php namespace Proxy\Exception;
+<?php
 
-class InvalidArgumentException extends \InvalidArgumentException {}
+namespace Proxy\Exception;
+
+class InvalidArgumentException extends \InvalidArgumentException
+{
+}

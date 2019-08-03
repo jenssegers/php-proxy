@@ -1,4 +1,6 @@
-<?php namespace Proxy;
+<?php
+
+namespace Proxy;
 
 use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\UnexpectedValueException;
@@ -8,32 +10,24 @@ use Relay\RelayBuilder;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
-class Proxy {
-
+class Proxy
+{
     /**
-     * The Request instance.
-     *
      * @var RequestInterface
      */
     protected $request;
 
     /**
-     * The adapter instance.
-     *
      * @var AdapterInterface
      */
     protected $adapter;
 
     /**
-     * Middleware filters.
-     *
      * @var callable[]
      */
     protected $filters = [];
 
     /**
-     * Construct a Proxy instance.
-     *
      * @param AdapterInterface $adapter
      */
     public function __construct(AdapterInterface $adapter)
@@ -59,12 +53,11 @@ class Proxy {
      *
      * @param  string $target
      * @throws UnexpectedValueException
-     * @return Response
+     * @return ResponseInterface
      */
     public function to($target)
     {
-        if (is_null($this->request))
-        {
+        if ($this->request === null) {
             throw new UnexpectedValueException('Missing request instance.');
         }
 
@@ -89,8 +82,7 @@ class Proxy {
 
         $stack = $this->filters;
 
-        $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next)
-        {
+        $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) {
             $response = $this->adapter->send($request);
 
             return $next($request, $response);
@@ -102,7 +94,7 @@ class Proxy {
     }
 
     /**
-     * Add filter middleware.
+     * Add a filter middleware.
      *
      * @param  callable $callable
      * @return $this
@@ -115,13 +107,10 @@ class Proxy {
     }
 
     /**
-     * Get the request instance.
-     *
      * @return RequestInterface
      */
     public function getRequest()
     {
         return $this->request;
     }
-
 }

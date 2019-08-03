@@ -1,12 +1,13 @@
-<?php namespace Proxy\Adapter\Guzzle;
+<?php
+
+namespace Proxy\Adapter\Guzzle;
 
 use GuzzleHttp\Client;
 use Proxy\Adapter\AdapterInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
-class GuzzleAdapter implements AdapterInterface {
-
+class GuzzleAdapter implements AdapterInterface
+{
     /**
      * The Guzzle client instance.
      *
@@ -25,10 +26,7 @@ class GuzzleAdapter implements AdapterInterface {
     }
 
     /**
-     * Send the request and return the response.
-     *
-     * @param  RequestInterface $request
-     * @return ResponseInterface
+     * @inheritdoc
      */
     public function send(RequestInterface $request)
     {

@@ -1,10 +1,12 @@
-<?php namespace Proxy\Filter;
+<?php
+
+namespace Proxy\Filter;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class RewriteLocationFilter implements FilterInterface {
-
+class RewriteLocationFilter implements FilterInterface
+{
     const LOCATION = 'location';
 
     /**
@@ -14,15 +16,19 @@ class RewriteLocationFilter implements FilterInterface {
     {
         $response = $next($request, $response);
 
-        if ($response->hasHeader(self::LOCATION))
-        {
+        if ($response->hasHeader(self::LOCATION)) {
             $location = $response->getHeader(self::LOCATION)[0];
             $original = parse_url($location);
 
             $target = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
 
-            if (isset($original['path']))  $target .= $original['path'];
-            if (isset($original['query'])) $target .= '?' . $original['query'];
+            if (isset($original['path'])) {
+                $target .= $original['path'];
+            }
+
+            if (isset($original['query'])) {
+                $target .= '?' . $original['query'];
+            }
 
             $response = $response
                 ->withHeader('X-Proxy-Location', $location)

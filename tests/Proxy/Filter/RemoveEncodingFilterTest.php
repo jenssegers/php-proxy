@@ -1,12 +1,15 @@
-<?php namespace Proxy\Filter;
+<?php
 
+namespace Proxy\Filter;
+
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 
-class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase
+class RemoveEncodingFilterTest extends TestCase
 {
     /**
-     * @var RemoveEncodingResponseFilter
+     * @var RemoveEncodingFilter
      */
     private $filter;
 
@@ -22,7 +25,9 @@ class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request;
         $response = new Response('php://memory', 200, [RemoveEncodingFilter::TRANSFER_ENCODING => 'foo']);
-        $next = function () use ($response) { return $response; };
+        $next = function () use ($response) {
+            return $response;
+        };
 
         $response = call_user_func($this->filter, $request, $response, $next);
 
@@ -36,7 +41,9 @@ class RemoveEncodingFilterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request;
         $response = new Response('php://memory', 200, [RemoveEncodingFilter::TRANSFER_ENCODING => 'foo']);
-        $next = function ($request, $response) { return $response; };
+        $next = function ($request, $response) {
+            return $response;
+        };
 
         $response = call_user_func($this->filter, $request, $response, $next);
 
