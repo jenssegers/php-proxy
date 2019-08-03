@@ -10,14 +10,12 @@ class GuzzleAdapter implements AdapterInterface
 {
     /**
      * The Guzzle client instance.
-     *
      * @var Client
      */
     protected $client;
 
     /**
      * Construct a Guzzle based HTTP adapter.
-     *
      * @param Client $client
      */
     public function __construct(Client $client = null)

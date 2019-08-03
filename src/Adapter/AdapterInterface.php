@@ -9,8 +9,7 @@ interface AdapterInterface
 {
     /**
      * Send the request and return the response.
-     *
-     * @param  RequestInterface $request
+     * @param RequestInterface $request
      * @return ResponseInterface
      */
     public function send(RequestInterface $request);

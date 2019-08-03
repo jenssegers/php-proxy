@@ -23,7 +23,7 @@ class RemoveLocationFilterTest extends TestCase
      */
     public function filter_removes_location()
     {
-        $request = new Request;
+        $request = new Request();
         $response = new Response('php://memory', 200, [RemoveLocationFilter::LOCATION => 'http://www.example.com']);
         $next = function () use ($response) {
             return $response;
@@ -39,7 +39,7 @@ class RemoveLocationFilterTest extends TestCase
      */
     public function filter_adds_location_as_xheader()
     {
-        $request = new Request;
+        $request = new Request();
         $response = new Response('php://memory', 200, [RemoveLocationFilter::LOCATION => 'http://www.example.com']);
         $next = function () use ($response) {
             return $response;

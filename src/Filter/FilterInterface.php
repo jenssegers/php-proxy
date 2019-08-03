@@ -9,7 +9,6 @@ interface FilterInterface
 {
     /**
      * Apply filter to request and/or response.
-     *
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param callable $next
