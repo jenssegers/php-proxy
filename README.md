@@ -16,6 +16,12 @@ composer require jenssegers/proxy
 
 The following example creates a request object, based on the current browser request, and forwards it to `example.com`. The `RemoveEncodingFilter` removes the encoding headers from the original response so that the current webserver can set these correctly.
 
+To output the request from the sample below it is required to install [zend-httphandlerrunner](https://docs.zendframework.com/zend-httphandlerrunner/emitters/) package
+
+```
+composer require zendframework/zend-httphandlerrunner
+```
+
 ```php
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
@@ -38,7 +44,7 @@ $proxy->filter(new RemoveEncodingFilter());
 $response = $proxy->forward($request)->to('http://example.com');
 
 // Output response to the browser.
-(new Zend\Diactoros\Response\SapiEmitter)->emit($response);
+(new Zend\HttpHandlerRunner\Emitter\SapiEmitter)->emit($response);
 ```
 
 ## Filters
