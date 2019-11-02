@@ -74,6 +74,11 @@ class Proxy
             $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
         }
 
+        //check for query parameters.
+        if ($query = $target->getQuery()) {
+            $uri = $uri->withQuery($query);
+        }
+
         $request = $this->request->withUri($uri);
 
         $stack = $this->filters;
