@@ -71,7 +71,8 @@ class Proxy
 
         // Check for subdirectory.
         if ($path = $target->getPath()) {
-            $uri = $uri->withPath(rtrim($path, '/') . '/' . ltrim($uri->getPath(), '/'));
+            $uriPath = ltrim($uri->getPath(), '/');
+            $uri = $uri->withPath(rtrim($path, '/') . (!empty($uriPath) ? ('/' . ltrim($uri->getPath(), '/')) : ''));
         }
 
         //check for query parameters.
