@@ -38,7 +38,7 @@ $proxy->filter(new RemoveEncodingFilter());
 $response = $proxy->forward($request)->to('http://example.com');
 
 // Output response to the browser.
-(new Zend\Diactoros\Response\SapiEmitter)->emit($response);
+(new Laminas\HttpHandlerRunner\Emitter\SapiEmitter)->emit($response);
 ```
 
 ## Filters
