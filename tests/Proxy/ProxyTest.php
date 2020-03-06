@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Proxy\Adapter\Dummy\DummyAdapter;
 use Proxy\Exception\UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 
 class ProxyTest extends TestCase
 {

@@ -3,8 +3,8 @@
 namespace Proxy\Filter;
 
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
 
 class RemoveLocationFilterTest extends TestCase
 {

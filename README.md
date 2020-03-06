@@ -20,7 +20,7 @@ The following example creates a request object, based on the current browser req
 use Proxy\Proxy;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Proxy\Filter\RemoveEncodingFilter;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 
 // Create a PSR7 request based on the current browser request.
 $request = ServerRequestFactory::fromGlobals();
@@ -38,7 +38,7 @@ $proxy->filter(new RemoveEncodingFilter());
 $response = $proxy->forward($request)->to('http://example.com');
 
 // Output response to the browser.
-(new Zend\Diactoros\Response\SapiEmitter)->emit($response);
+(new Laminas\HttpHandlerRunner\Emitter\SapiEmitter)->emit($response);
 ```
 
 ## Filters

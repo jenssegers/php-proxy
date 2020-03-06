@@ -4,7 +4,7 @@ namespace Proxy\Adapter\Dummy;
 
 use Proxy\Adapter\AdapterInterface;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 
 class DummyAdapter implements AdapterInterface
 {

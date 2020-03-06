@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use PHPUnit\Framework\TestCase;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Request;
+use Laminas\Diactoros\Request;
 
 class GuzzleAdapterTest extends TestCase
 {
