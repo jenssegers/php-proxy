@@ -3,11 +3,11 @@ language: php
 php:
   - 7.3
   - 7.4
-  - 8.0
+  - nightly
 
 sudo: false
 
-dist: focal
+dist: bionic
 
 before_script:
   - composer self-update
