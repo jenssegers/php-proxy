@@ -11,7 +11,7 @@ class RewriteLocationFilterTest extends TestCase
      */
     private $filter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->filter = new RewriteLocationFilter();
     }
