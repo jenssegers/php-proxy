@@ -2,6 +2,7 @@
 
 namespace Proxy;
 
+use GuzzleHttp\Exception\ClientException;
 use Proxy\Adapter\AdapterInterface;
 use Proxy\Exception\UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
@@ -79,7 +80,11 @@ class Proxy
         $stack = $this->filters;
 
         $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) {
-            $response = $this->adapter->send($request);
+            try {
+                $response = $this->adapter->send($request);
+            } catch (ClientException $ex) {
+                $response = $ex->getResponse();
+            }
 
             return $next($request, $response);
         };
