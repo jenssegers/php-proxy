@@ -34,11 +34,16 @@ $proxy = new Proxy(new GuzzleAdapter($guzzle));
 // Add a response filter that removes the encoding headers.
 $proxy->filter(new RemoveEncodingFilter());
 
-// Forward the request and get the response.
-$response = $proxy->forward($request)->to('http://example.com');
+try {
+    // Forward the request and get the response.
+    $response = $proxy->forward($request)->to('http://example.com');
 
-// Output response to the browser.
-(new Laminas\HttpHandlerRunner\Emitter\SapiEmitter)->emit($response);
+    // Output response to the browser.
+    (new Laminas\HttpHandlerRunner\Emitter\SapiEmitter)->emit($response);
+} catch(\GuzzleHttp\Exception\BadResponseException $e) {
+    // Correct way to handle bad responses
+    (new Laminas\HttpHandlerRunner\Emitter\SapiEmitter)->emit($e->getResponse());
+}
 ```
 
 ## Filters
