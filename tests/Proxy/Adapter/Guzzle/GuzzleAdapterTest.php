@@ -32,7 +32,7 @@ class GuzzleAdapterTest extends TestCase
      */
     private $body = 'Totally awesome response body';
 
-    public function setUp()
+    public function setUp(): void
     {
         $mock = new MockHandler([
             $this->createResponse(),

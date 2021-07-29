@@ -17,17 +17,17 @@ class ProxyTest extends TestCase
      */
     private $proxy;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->proxy = new Proxy(new DummyAdapter());
     }
 
     /**
      * @test
-     * @expectedException UnexpectedValueException
      */
     public function to_throws_exception_if_no_request_is_given()
     {
+        $this->expectException('UnexpectedValueException');
         $this->proxy->to('http://www.example.com');
     }
 
