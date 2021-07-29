@@ -48,8 +48,7 @@ class ProxyTest extends TestCase
     {
         $applied = false;
 
-        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $response) use (&$applied
-        ) {
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $response) use (&$applied) {
             $applied = true;
         })->to('http://www.example.com');
 
