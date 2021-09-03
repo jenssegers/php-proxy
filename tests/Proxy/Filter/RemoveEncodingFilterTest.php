@@ -13,7 +13,7 @@ class RemoveEncodingFilterTest extends TestCase
      */
     private $filter;
 
-    public function setUp()
+    public function setUp(): Void
     {
         $this->filter = new RemoveEncodingFilter();
     }
@@ -29,7 +29,7 @@ class RemoveEncodingFilterTest extends TestCase
             return $response;
         };
 
-        $response = call_user_func($this->filter, $request, $response, $next);
+        $response = call_user_func($this->filter, $request, $next);
 
         $this->assertFalse($response->hasHeader(RemoveEncodingFilter::TRANSFER_ENCODING));
     }
@@ -41,11 +41,11 @@ class RemoveEncodingFilterTest extends TestCase
     {
         $request = new Request();
         $response = new Response('php://memory', 200, [RemoveEncodingFilter::TRANSFER_ENCODING => 'foo']);
-        $next = function ($request, $response) {
+        $next = function () use ($response) {
             return $response;
         };
 
-        $response = call_user_func($this->filter, $request, $response, $next);
+        $response = call_user_func($this->filter, $request, $next);
 
         $this->assertFalse($response->hasHeader(RemoveEncodingFilter::CONTENT_ENCODING));
     }

@@ -2,13 +2,14 @@
 
 namespace Proxy;
 
-use PHPUnit\Framework\TestCase;
-use Proxy\Adapter\Dummy\DummyAdapter;
-use Proxy\Exception\UnexpectedValueException;
-use Psr\Http\Message\RequestInterface;
 use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
+use PHPUnit\Framework\TestCase;
+use Proxy\Adapter\Dummy\DummyAdapter;
+use Psr\Http\Message\RequestInterface;
 use Laminas\Diactoros\ServerRequestFactory;
+use Proxy\Exception\UnexpectedValueException;
+use PHPUnit\Framework\InvalidArgumentException;
 
 class ProxyTest extends TestCase
 {
@@ -17,7 +18,7 @@ class ProxyTest extends TestCase
      */
     private $proxy;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->proxy = new Proxy(new DummyAdapter());
     }
@@ -28,6 +29,7 @@ class ProxyTest extends TestCase
      */
     public function to_throws_exception_if_no_request_is_given()
     {
+        $this->expectException(UnexpectedValueException::class);
         $this->proxy->to('http://www.example.com');
     }
 
@@ -48,9 +50,12 @@ class ProxyTest extends TestCase
     {
         $applied = false;
 
-        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $response) use (&$applied
+        $this->proxy->forward(ServerRequestFactory::fromGlobals())->filter(function ($request, $next) use (
+            &$applied
         ) {
             $applied = true;
+
+            return new Response('php://memory', 200);
         })->to('http://www.example.com');
 
         $this->assertTrue($applied);
@@ -61,7 +66,7 @@ class ProxyTest extends TestCase
      */
     public function to_sends_request()
     {
-        $request = new Request('http://localhost/path?query=yes', 'GET');
+        $request = (new ServerRequestFactory)->createServerRequest('GET', 'http://localhost/path?query=yes');
         $url = 'https://www.example.com';
 
         $adapter = $this->getMockBuilder(DummyAdapter::class)
@@ -85,7 +90,7 @@ class ProxyTest extends TestCase
      */
     public function to_sends_request_with_port()
     {
-        $request = new Request('http://localhost/path?query=yes', 'GET');
+        $request = (new ServerRequestFactory)->createServerRequest('GET', 'http://localhost/path?query=yes');
         $url = 'https://www.example.com:3000';
 
         $adapter = $this->getMockBuilder(DummyAdapter::class)
@@ -109,7 +114,7 @@ class ProxyTest extends TestCase
      */
     public function to_sends_request_with_subdirectory()
     {
-        $request = new Request('http://localhost/path?query=yes', 'GET');
+        $request = (new ServerRequestFactory)->createServerRequest('GET', 'http://localhost/path?query=yes');
         $url = 'https://www.example.com/proxy/';
 
         $adapter = $this->getMockBuilder(DummyAdapter::class)

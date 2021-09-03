@@ -13,7 +13,7 @@ class RemoveLocationFilterTest extends TestCase
      */
     private $filter;
 
-    public function setUp()
+    public function setUp(): Void
     {
         $this->filter = new RemoveLocationFilter();
     }
@@ -29,7 +29,7 @@ class RemoveLocationFilterTest extends TestCase
             return $response;
         };
 
-        $response = call_user_func($this->filter, $request, $response, $next);
+        $response = call_user_func($this->filter, $request, $next);
 
         $this->assertFalse($response->hasHeader(RemoveLocationFilter::LOCATION));
     }
@@ -45,7 +45,7 @@ class RemoveLocationFilterTest extends TestCase
             return $response;
         };
 
-        $response = call_user_func($this->filter, $request, $response, $next);
+        $response = call_user_func($this->filter, $request, $next);
 
         $this->assertEquals('http://www.example.com', $response->getHeader('X-Proxy-Location')[0]);
     }

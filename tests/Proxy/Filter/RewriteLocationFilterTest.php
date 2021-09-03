@@ -1,4 +1,6 @@
-<?php namespace Proxy\Filter;
+<?php
+
+namespace Proxy\Filter;
 
 use PHPUnit\Framework\TestCase;
 use Laminas\Diactoros\Request;
@@ -11,7 +13,7 @@ class RewriteLocationFilterTest extends TestCase
      */
     private $filter;
 
-    public function setUp()
+    public function setUp(): Void
     {
         $this->filter = new RewriteLocationFilter();
     }
@@ -30,7 +32,7 @@ class RewriteLocationFilterTest extends TestCase
             return $response;
         };
 
-        $response = call_user_func($this->filter, $request, $response, $next);
+        $response = call_user_func($this->filter, $request, $next);
 
         $this->assertTrue($response->hasHeader('X-Proxy-Location'));
         $this->assertTrue($response->hasHeader(RewriteLocationFilter::LOCATION));
