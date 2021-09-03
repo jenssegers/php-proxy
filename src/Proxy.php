@@ -2,14 +2,15 @@
 
 namespace Proxy;
 
-use GuzzleHttp\Exception\ClientException;
+use Relay\RelayBuilder;
+use Laminas\Diactoros\Uri;
+use Laminas\Diactoros\Response;
 use Proxy\Adapter\AdapterInterface;
-use Proxy\Exception\UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Relay\RelayBuilder;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\Uri;
+use Psr\Http\Server\MiddlewareInterface;
+use GuzzleHttp\Exception\ClientException;
+use Proxy\Exception\UnexpectedValueException;
 
 class Proxy
 {
@@ -79,19 +80,19 @@ class Proxy
 
         $stack = $this->filters;
 
-        $stack[] = function (RequestInterface $request, ResponseInterface $response, callable $next) {
+        $stack[] = function (RequestInterface $request, callable $next) {
             try {
                 $response = $this->adapter->send($request);
             } catch (ClientException $ex) {
                 $response = $ex->getResponse();
             }
 
-            return $next($request, $response);
+            return $response;
         };
 
         $relay = (new RelayBuilder)->newInstance($stack);
 
-        return $relay($request, new Response);
+        return $relay->handle($request);
     }
 
     /**
