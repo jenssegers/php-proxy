@@ -13,9 +13,9 @@ class RemoveEncodingFilter implements FilterInterface
     /**
      * @inheritdoc
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, callable $next): ResponseInterface
     {
-        $response = $next($request, $response);
+        $response = $next($request);
 
         return $response
             ->withoutHeader(self::TRANSFER_ENCODING)

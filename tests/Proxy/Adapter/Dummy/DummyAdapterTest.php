@@ -13,7 +13,7 @@ class DummyAdapterTest extends TestCase
      */
     private $adapter;
 
-    public function setUp()
+    public function setUp(): Void
     {
         $this->adapter = new DummyAdapter();
     }
