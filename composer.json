@@ -16,10 +16,10 @@
         }
     ],
     "require": {
-        "php": "^7.3",
+        "php": "^7.3 || ^8.0",
         "psr/http-message": "^1.0",
         "guzzlehttp/guzzle": "^7.1",
-        "laminas/laminas-diactoros": "^2.4",
+        "laminas/laminas-diactoros": "^2.5",
         "relay/relay": "^1.0",
         "laminas/laminas-httphandlerrunner": "^1.2"
     },
