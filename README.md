@@ -4,6 +4,7 @@
 
 This is a HTTP/HTTPS proxy script that forwards requests to a different server and returns the response. The Proxy class uses PSR7 request/response objects as input/output, and uses Guzzle to do the actual HTTP request.
 
+
 ## Installation
 
 Install using composer:

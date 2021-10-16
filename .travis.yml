@@ -1,13 +1,12 @@
 language: php
 
 php:
-  - 7.1
-  - 7.2
   - 7.3
+  - 7.4
 
 sudo: false
 
-dist: trusty
+dist: bionic
 
 before_script:
   - composer self-update
