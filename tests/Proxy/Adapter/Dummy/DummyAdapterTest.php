@@ -2,9 +2,9 @@
 
 namespace Proxy\Adapter\Dummy;
 
-use Psr\Http\Message\ResponseInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 class DummyAdapterTest extends TestCase
 {
@@ -13,7 +13,7 @@ class DummyAdapterTest extends TestCase
      */
     private $adapter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->adapter = new DummyAdapter();
     }

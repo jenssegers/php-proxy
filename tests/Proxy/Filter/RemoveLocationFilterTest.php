@@ -2,9 +2,9 @@
 
 namespace Proxy\Filter;
 
-use PHPUnit\Framework\TestCase;
 use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
+use PHPUnit\Framework\TestCase;
 
 class RemoveLocationFilterTest extends TestCase
 {
@@ -13,7 +13,7 @@ class RemoveLocationFilterTest extends TestCase
      */
     private $filter;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->filter = new RemoveLocationFilter();
     }

@@ -5,10 +5,10 @@ namespace Proxy\Proxy\Adapter\Guzzle;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Laminas\Diactoros\Request;
 use PHPUnit\Framework\TestCase;
 use Proxy\Adapter\Guzzle\GuzzleAdapter;
 use Psr\Http\Message\ResponseInterface;
-use Laminas\Diactoros\Request;
 
 class GuzzleAdapterTest extends TestCase
 {
@@ -32,7 +32,7 @@ class GuzzleAdapterTest extends TestCase
      */
     private $body = 'Totally awesome response body';
 
-    public function setUp()
+    protected function setUp(): void
     {
         $mock = new MockHandler([
             $this->createResponse(),

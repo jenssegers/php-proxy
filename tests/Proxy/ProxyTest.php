@@ -2,13 +2,13 @@
 
 namespace Proxy;
 
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Proxy\Adapter\Dummy\DummyAdapter;
 use Proxy\Exception\UnexpectedValueException;
 use Psr\Http\Message\RequestInterface;
-use Laminas\Diactoros\Request;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\ServerRequestFactory;
 
 class ProxyTest extends TestCase
 {
@@ -17,17 +17,17 @@ class ProxyTest extends TestCase
      */
     private $proxy;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->proxy = new Proxy(new DummyAdapter());
     }
 
     /**
      * @test
-     * @expectedException UnexpectedValueException
      */
     public function to_throws_exception_if_no_request_is_given()
     {
+        $this->expectException(UnexpectedValueException::class);
         $this->proxy->to('http://www.example.com');
     }
 
