@@ -3,7 +3,7 @@
 namespace Proxy\Adapter\Dummy;
 
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 
 class DummyAdapterTest extends TestCase

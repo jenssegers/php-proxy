@@ -1,8 +1,8 @@
 <?php namespace Proxy\Filter;
 
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
 
 class RewriteLocationFilterTest extends TestCase
 {
